@@ -1,0 +1,6 @@
+FROM mcr.microsoft.com/azure-cli
+
+WORKDIR /scripts
+COPY script-runner.sh .
+CMD ["./script-runner.sh", \
+    "https://raw.githubusercontent.com/ruanyf/simple-bash-scripts/master/scripts/hello-world.sh"]
