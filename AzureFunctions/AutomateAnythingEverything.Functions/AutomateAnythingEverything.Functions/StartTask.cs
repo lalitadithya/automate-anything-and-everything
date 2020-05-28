@@ -10,20 +10,18 @@ using Newtonsoft.Json;
 
 namespace AutomateAnythingEverything.Functions
 {
-    public static class Function1
+    public static class StartTask
     {
-        [FunctionName("Function1")]
+        [FunctionName("StartTask")]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
             ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
-            string name = req.Query["name"];
-
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            dynamic data = JsonConvert.DeserializeObject(requestBody);
-            name = name ?? data?.name;
+            Models.Task task = JsonConvert.DeserializeObject<Models.Task>(requestBody);
+            string name = task.TaskName;
 
             string responseMessage = string.IsNullOrEmpty(name)
                 ? "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response."
