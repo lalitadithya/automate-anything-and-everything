@@ -1,0 +1,17 @@
+{
+  "taskName": "StopVM",
+  "dockerImage": "AzCliImage",
+  "scriptName": "StopVM.sh",
+  "scriptParameters": [
+    {
+      "parameterName": "VMName",
+      "parameterType": "string",
+      "required": true
+    },
+    {
+      "parameterName": "ResourceGroupName",
+      "parameterType": "string",
+      "required": true
+    }
+  ]
+}

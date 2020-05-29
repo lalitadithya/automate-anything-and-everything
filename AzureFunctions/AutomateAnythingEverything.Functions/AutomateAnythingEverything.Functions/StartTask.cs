@@ -8,15 +8,17 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Microsoft.WindowsAzure.Storage;
+using Microsoft.Extensions.Configuration;
+using AutomateAnythingEverything.Functions.Services;
 
 namespace AutomateAnythingEverything.Functions
 {
     public class StartTask
     {
-        private readonly CloudStorageAccount cloudStorageAccount;
-        public StartTask(CloudStorageAccount cloudStorageAccount)
+        private readonly StorageService storageService;
+        public StartTask(StorageService storageService)
         {
-            this.cloudStorageAccount = cloudStorageAccount;
+            this.storageService = storageService;
         }
 
         [FunctionName("StartTask")]
@@ -28,6 +30,8 @@ namespace AutomateAnythingEverything.Functions
 
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             Models.Task task = JsonConvert.DeserializeObject<Models.Task>(requestBody);
+            string jsonTaskDescription = await storageService.GetFileContents(task.TaskName);
+
             string name = task.TaskName;
 
             string responseMessage = string.IsNullOrEmpty(name)
