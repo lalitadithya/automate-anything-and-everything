@@ -7,13 +7,20 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Microsoft.WindowsAzure.Storage;
 
 namespace AutomateAnythingEverything.Functions
 {
-    public static class StartTask
+    public class StartTask
     {
+        private readonly CloudStorageAccount cloudStorageAccount;
+        public StartTask(CloudStorageAccount cloudStorageAccount)
+        {
+            this.cloudStorageAccount = cloudStorageAccount;
+        }
+
         [FunctionName("StartTask")]
-        public static async Task<IActionResult> Run(
+        public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
             ILogger log)
         {
