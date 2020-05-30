@@ -1,8 +1,11 @@
-name: CI
+name: Deploy-Azure-Functions
 
 on:
   push:
     branches: [ master ]
+
+env:
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: 'AzureFunctions/AutomateAnythingEverything.Functions/'
 
 jobs:
   build-and-deploy:
@@ -10,11 +13,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    
-    - name: Azure Login
-      uses: Azure/login@v1.1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
     
     - name: Setup .NET Core SDK
       uses: actions/setup-dotnet@v1.4.0
@@ -24,6 +22,13 @@ jobs:
     - name: 'Run dotnet build'
       shell: bash
       run: |
-        pushd ./AzureFunctions/AutomateAnythingEverything.Functions/
+        pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
         dotnet build --configuration Release --output ./output
         popd
+    
+    - name: Azure Functions Action
+      uses: Azure/functions-action@v1.1.4
+      with:
+        app-name: fa-a3e-task-orchestrator-dev
+        package: './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
+        publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
