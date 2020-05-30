@@ -10,6 +10,8 @@ using Newtonsoft.Json;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.Extensions.Configuration;
 using AutomateAnythingEverything.Functions.Services;
+using AutomateAnythingEverything.Functions.Models;
+using AutomateAnythingEverything.Functions.Helpers;
 
 namespace AutomateAnythingEverything.Functions
 {
@@ -30,7 +32,16 @@ namespace AutomateAnythingEverything.Functions
 
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             Models.Task task = JsonConvert.DeserializeObject<Models.Task>(requestBody);
+
             string jsonTaskDescription = await storageService.GetFileContents(task.TaskName);
+            TaskDefinition taskDefinition = JsonConvert.DeserializeObject<TaskDefinition>(jsonTaskDescription);
+
+            if (!TaskParameterValidationHelper.ValidateTaskParameters(task, taskDefinition, out string errorMessage))
+            {
+                return new BadRequestObjectResult(errorMessage);
+            }
+            
+
 
             string name = task.TaskName;
 
