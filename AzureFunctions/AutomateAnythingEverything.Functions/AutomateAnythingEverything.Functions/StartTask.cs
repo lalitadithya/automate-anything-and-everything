@@ -18,9 +18,11 @@ namespace AutomateAnythingEverything.Functions
     public class StartTask
     {
         private readonly StorageService storageService;
-        public StartTask(StorageService storageService)
+        private readonly ContainerInstanceService containerInstanceService;
+        public StartTask(StorageService storageService, ContainerInstanceService containerInstanceService)
         {
             this.storageService = storageService;
+            this.containerInstanceService = containerInstanceService;
         }
 
         [FunctionName("StartTask")]
@@ -40,8 +42,8 @@ namespace AutomateAnythingEverything.Functions
             {
                 return new BadRequestObjectResult(errorMessage);
             }
-            
 
+            await containerInstanceService.StartContainerInstace(taskDefinition.DockerImage, new System.Collections.Generic.Dictionary<string, string>(), "");
 
             string name = task.TaskName;
 
