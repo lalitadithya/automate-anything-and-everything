@@ -17,12 +17,15 @@ namespace AutomateAnythingEverything.Functions
 {
     public class StartTask
     {
+        private readonly IConfigurationRoot configuration;
         private readonly StorageService storageService;
         private readonly ContainerInstanceService containerInstanceService;
-        public StartTask(StorageService storageService, ContainerInstanceService containerInstanceService)
+
+        public StartTask(StorageService storageService, ContainerInstanceService containerInstanceService, IConfigurationRoot configuration)
         {
             this.storageService = storageService;
             this.containerInstanceService = containerInstanceService;
+            this.configuration = configuration;
         }
 
         [FunctionName("StartTask")]
@@ -35,13 +38,15 @@ namespace AutomateAnythingEverything.Functions
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             Models.Task task = JsonConvert.DeserializeObject<Models.Task>(requestBody);
 
-            string jsonTaskDescription = await storageService.GetFileContents(task.TaskName);
+            string jsonTaskDescription = await storageService.GetFileContents(task.TaskName, configuration["TaskDefinitionContainerName"]);
             TaskDefinition taskDefinition = JsonConvert.DeserializeObject<TaskDefinition>(jsonTaskDescription);
 
             if (!TaskParameterValidationHelper.ValidateTaskParameters(task, taskDefinition, out string errorMessage))
             {
                 return new BadRequestObjectResult(errorMessage);
             }
+
+
 
             await containerInstanceService.StartContainerInstace(taskDefinition.DockerImage, new System.Collections.Generic.Dictionary<string, string>(), "");
 

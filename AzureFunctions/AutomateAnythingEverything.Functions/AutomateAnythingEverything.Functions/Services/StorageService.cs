@@ -11,17 +11,15 @@ namespace AutomateAnythingEverything.Functions.Services
     public class StorageService
     {
         private readonly CloudStorageAccount cloudStorageAccount;
-        private readonly IConfigurationRoot configuration;
-        public StorageService(CloudStorageAccount cloudStorageAccount, IConfigurationRoot configuration)
+        public StorageService(CloudStorageAccount cloudStorageAccount)
         {
             this.cloudStorageAccount = cloudStorageAccount;
-            this.configuration = configuration;
         }
 
-        public async Task<string> GetFileContents(string fileName)
+        public async Task<string> GetFileContents(string fileName, string containerName)
         {
             var blobClient = cloudStorageAccount.CreateCloudBlobClient();
-            var storageContainer = blobClient.GetContainerReference(configuration["ContainerName"]);
+            var storageContainer = blobClient.GetContainerReference(containerName);
             var blob = storageContainer.GetBlobReference(fileName);
 
             using MemoryStream blobContents = new MemoryStream();
