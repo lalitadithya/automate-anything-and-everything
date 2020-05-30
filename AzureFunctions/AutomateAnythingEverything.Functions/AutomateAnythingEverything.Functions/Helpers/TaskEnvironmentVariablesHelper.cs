@@ -12,7 +12,7 @@ namespace AutomateAnythingEverything.Functions.Helpers
         {
             return taskDefinition.ScriptParameters
                                 .ToDictionary(x => x.ParameterName, 
-                                                x => task.Parameters.Select(y => y.Value).FirstOrDefault(y => x.ParameterName == x.ParameterName));
+                                                x => task.Parameters.FirstOrDefault(y => x.ParameterName == y.Name)?.Value);
         }
     }
 }
