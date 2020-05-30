@@ -4,6 +4,7 @@ using Microsoft.Azure.Management.Fluent;
 using Microsoft.Azure.Management.ResourceManager.Fluent;
 using Microsoft.Azure.Management.ResourceManager.Fluent.Authentication;
 using Microsoft.Azure.Management.ResourceManager.Fluent.Core;
+using Microsoft.Azure.Management.ResourceManager.Fluent.Models;
 using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -43,6 +44,7 @@ namespace AutomateAnythingEverything.Functions.Services
                                     .WithEnvironmentVariables(environmentVariables)
                                     .WithStartingCommandLine("script-runner.sh", scriptLocation)
                                     .Attach()
+                                .WithExistingUserAssignedManagedServiceIdentity(await azure.Identities.GetByIdAsync(configuration["UserAssignedManagedServiceIdentityId"]))
                                 .WithRestartPolicy(ContainerGroupRestartPolicy.Never)
                                 .CreateAsync();
         }
