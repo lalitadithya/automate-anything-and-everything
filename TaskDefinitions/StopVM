@@ -1,7 +1,7 @@
 {
   "taskName": "StopVM",
   "dockerImage": "AzCliImage",
-  "scriptName": "StopVM.sh",
+  "scriptName": "stop-vm-azure.sh",
   "scriptParameters": [
     {
       "parameterName": "VMName",
