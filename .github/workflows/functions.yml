@@ -3,6 +3,7 @@ name: Deploy-Azure-Functions
 on:
   push:
     branches: [ master ]
+    paths: ['AzureFunctions/AutomateAnythingEverything.Functions/**']
 
 env:
   AZURE_FUNCTIONAPP_PACKAGE_PATH: 'AzureFunctions/AutomateAnythingEverything.Functions/'
