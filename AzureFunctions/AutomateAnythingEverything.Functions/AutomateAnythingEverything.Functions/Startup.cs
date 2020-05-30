@@ -23,6 +23,7 @@ namespace AutomateAnythingEverything.Functions
             builder.Services.AddSingleton(typeof(CloudStorageAccount), CloudStorageAccount.Parse(configuration["StorageConnetionString"]));
             builder.Services.AddSingleton(typeof(IConfigurationRoot), configuration);
             builder.Services.AddSingleton(typeof(StorageService));
+            builder.Services.AddSingleton(typeof(ContainerInstanceService));
         }
     }
 }

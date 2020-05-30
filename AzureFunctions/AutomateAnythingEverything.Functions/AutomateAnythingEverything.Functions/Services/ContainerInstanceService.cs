@@ -18,7 +18,7 @@ namespace AutomateAnythingEverything.Functions.Services
         public ContainerInstanceService(IConfigurationRoot configuration)
         {
             this.configuration = configuration;
-            azure = AuthenticateAndGetAzureInstance();
+            //azure = AuthenticateAndGetAzureInstance();
         }
 
         public async Task StartContainerInstace(string imageName, Dictionary<string, string> environmentVariables, string scriptLocation)

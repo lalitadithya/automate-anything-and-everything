@@ -46,9 +46,9 @@ namespace AutomateAnythingEverything.Functions
                 return new BadRequestObjectResult(errorMessage);
             }
 
+            string uriForScript = storageService.GetUriForFile(taskDefinition.ScriptName, configuration["TaskScriptsContainerName"]);
 
-
-            await containerInstanceService.StartContainerInstace(taskDefinition.DockerImage, new System.Collections.Generic.Dictionary<string, string>(), "");
+            await containerInstanceService.StartContainerInstace(taskDefinition.DockerImage, new System.Collections.Generic.Dictionary<string, string>(), uriForScript);
 
             string name = task.TaskName;
 
