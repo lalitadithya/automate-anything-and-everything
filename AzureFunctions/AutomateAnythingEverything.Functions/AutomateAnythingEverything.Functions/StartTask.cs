@@ -48,7 +48,9 @@ namespace AutomateAnythingEverything.Functions
 
             string uriForScript = storageService.GetUriForFile(taskDefinition.ScriptName, configuration["TaskScriptsContainerName"]);
 
-            await containerInstanceService.StartContainerInstace(taskDefinition.DockerImage, new System.Collections.Generic.Dictionary<string, string>(), uriForScript);
+            var environmentVariables = TaskEnvironmentVariablesHelper.ConstructEnvionmentVariables(task, taskDefinition);
+
+            await containerInstanceService.StartContainerInstace(taskDefinition.DockerImage, environmentVariables, uriForScript);
 
             string name = task.TaskName;
 
