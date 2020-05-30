@@ -22,9 +22,10 @@ namespace AutomateAnythingEverything.Functions.Services
             azure = AuthenticateAndGetAzureInstance();
         }
 
-        public async Task StartContainerInstace(string imageName, Dictionary<string, string> environmentVariables, string scriptLocation)
+        public async Task<string> StartContainerInstace(string imageName, Dictionary<string, string> environmentVariables, string scriptLocation)
         {
             var acg = await CreateAndStartContainerInstance(imageName, environmentVariables, scriptLocation, azure);
+            return acg.Name;
         }
 
         private async Task<IContainerGroup> CreateAndStartContainerInstance(string imageName, Dictionary<string, string> environmentVariables, string scriptLocation, IAzure azure)

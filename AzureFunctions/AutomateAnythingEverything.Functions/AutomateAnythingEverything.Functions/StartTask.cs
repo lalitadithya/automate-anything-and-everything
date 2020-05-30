@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using AutomateAnythingEverything.Functions.Services;
 using AutomateAnythingEverything.Functions.Models;
 using AutomateAnythingEverything.Functions.Helpers;
+using System.Web.Http;
 
 namespace AutomateAnythingEverything.Functions
 {
@@ -33,32 +34,41 @@ namespace AutomateAnythingEverything.Functions
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
             ILogger log)
         {
-            log.LogInformation("C# HTTP trigger function processed a request.");
-
-            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            Models.Task task = JsonConvert.DeserializeObject<Models.Task>(requestBody);
-
-            string jsonTaskDescription = await storageService.GetFileContents(task.TaskName, configuration["TaskDefinitionContainerName"]);
-            TaskDefinition taskDefinition = JsonConvert.DeserializeObject<TaskDefinition>(jsonTaskDescription);
-
-            if (!TaskParameterValidationHelper.ValidateTaskParameters(task, taskDefinition, out string errorMessage))
+            try
             {
-                return new BadRequestObjectResult(errorMessage);
+                log.LogInformation("C# HTTP trigger function processed a request.");
+
+                string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+                Models.Task task = JsonConvert.DeserializeObject<Models.Task>(requestBody);
+
+                string jsonTaskDescription = await storageService.GetFileContents(task.TaskName, configuration["TaskDefinitionContainerName"]);
+                TaskDefinition taskDefinition = JsonConvert.DeserializeObject<TaskDefinition>(jsonTaskDescription);
+
+                log.LogInformation("Validating task parameters");
+                if (!TaskParameterValidationHelper.ValidateTaskParameters(task, taskDefinition, out string errorMessage))
+                {
+                    log.LogInformation("Validating task parameters failed");
+                    return new BadRequestObjectResult(errorMessage);
+                }
+
+                log.LogInformation("Getting SAS for script");
+                string uriForScript = storageService.GetUriForFile(taskDefinition.ScriptName, configuration["TaskScriptsContainerName"]);
+
+                log.LogInformation("Constructing environment variables");
+                var environmentVariables = TaskEnvironmentVariablesHelper.ConstructEnvionmentVariables(task, taskDefinition);
+
+                log.LogInformation("Starting container instance");
+                string name = await containerInstanceService.StartContainerInstace(taskDefinition.DockerImage, environmentVariables, uriForScript);
+
+                log.LogInformation("Complete! Started container with name " + name);
+
+                return new OkObjectResult(name);
             }
-
-            string uriForScript = storageService.GetUriForFile(taskDefinition.ScriptName, configuration["TaskScriptsContainerName"]);
-
-            var environmentVariables = TaskEnvironmentVariablesHelper.ConstructEnvionmentVariables(task, taskDefinition);
-
-            await containerInstanceService.StartContainerInstace(taskDefinition.DockerImage, environmentVariables, uriForScript);
-
-            string name = task.TaskName;
-
-            string responseMessage = string.IsNullOrEmpty(name)
-                ? "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response."
-                : $"Hello, {name}. This HTTP triggered function executed successfully.";
-
-            return new OkObjectResult(responseMessage);
+            catch (Exception e)
+            {
+                log.LogError(e, "Unable to process request");
+                return new InternalServerErrorResult();
+            }
         }
     }
 }
