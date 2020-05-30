@@ -36,7 +36,7 @@ namespace AutomateAnythingEverything.Functions
         {
             try
             {
-                log.LogInformation("C# HTTP trigger function processed a request.");
+                log.LogInformation("Started processing request");
 
                 string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
                 Models.Task task = JsonConvert.DeserializeObject<Models.Task>(requestBody);
