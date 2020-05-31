@@ -1,0 +1,370 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "For_each_2": {
+                "actions": {
+                    "Delete_a_container_group": {
+                        "inputs": {
+                            "host": {
+                                "connection": {
+                                    "name": "@parameters('$connections')['aci']['connectionId']"
+                                }
+                            },
+                            "method": "delete",
+                            "path": "/subscriptions/@{encodeURIComponent('<<subscription_id>>')}/resourceGroups/@{encodeURIComponent('<<resource_group_name>>')}/providers/Microsoft.ContainerInstance/containerGroups/@{encodeURIComponent(body('Parse_JSON')?['name'])}",
+                            "queries": {
+                                "x-ms-api-version": "2019-12-01"
+                            }
+                        },
+                        "runAfter": {
+                            "Parse_JSON": [
+                                "Succeeded"
+                            ]
+                        },
+                        "type": "ApiConnection"
+                    },
+                    "Parse_JSON": {
+                        "inputs": {
+                            "content": "@items('For_each_2')",
+                            "schema": {
+                                "properties": {
+                                    "id": {
+                                        "type": "string"
+                                    },
+                                    "identity": {
+                                        "properties": {
+                                            "tenantId": {
+                                                "type": "string"
+                                            },
+                                            "type": {
+                                                "type": "string"
+                                            },
+                                            "userAssignedIdentities": {
+                                                "properties": {
+                                                    "/subscriptions/<<subscription_id>>/resourcegroups/<<resource_group_name>>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/<<identity_name>>": {
+                                                        "properties": {
+                                                            "clientId": {
+                                                                "type": "string"
+                                                            },
+                                                            "principalId": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "type": "object"
+                                    },
+                                    "location": {
+                                        "type": "string"
+                                    },
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "properties": {
+                                        "properties": {
+                                            "containers": {
+                                                "items": {
+                                                    "properties": {
+                                                        "name": {
+                                                            "type": "string"
+                                                        },
+                                                        "properties": {
+                                                            "properties": {
+                                                                "command": {
+                                                                    "items": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "type": "array"
+                                                                },
+                                                                "environmentVariables": {
+                                                                    "items": {
+                                                                        "properties": {
+                                                                            "name": {
+                                                                                "type": "string"
+                                                                            },
+                                                                            "value": {
+                                                                                "type": "string"
+                                                                            }
+                                                                        },
+                                                                        "required": [
+                                                                            "name",
+                                                                            "value"
+                                                                        ],
+                                                                        "type": "object"
+                                                                    },
+                                                                    "type": "array"
+                                                                },
+                                                                "image": {
+                                                                    "type": "string"
+                                                                },
+                                                                "ports": {
+                                                                    "type": "array"
+                                                                },
+                                                                "resources": {
+                                                                    "properties": {
+                                                                        "requests": {
+                                                                            "properties": {
+                                                                                "cpu": {
+                                                                                    "type": "integer"
+                                                                                },
+                                                                                "memoryInGB": {
+                                                                                    "type": "integer"
+                                                                                }
+                                                                            },
+                                                                            "type": "object"
+                                                                        }
+                                                                    },
+                                                                    "type": "object"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "name",
+                                                        "properties"
+                                                    ],
+                                                    "type": "object"
+                                                },
+                                                "type": "array"
+                                            },
+                                            "initContainers": {
+                                                "type": "array"
+                                            },
+                                            "osType": {
+                                                "type": "string"
+                                            },
+                                            "provisioningState": {
+                                                "type": "string"
+                                            },
+                                            "restartPolicy": {
+                                                "type": "string"
+                                            },
+                                            "sku": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "type": "object"
+                                    },
+                                    "tags": {
+                                        "properties": {},
+                                        "type": "object"
+                                    },
+                                    "type": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        },
+                        "runAfter": {},
+                        "type": "ParseJson"
+                    }
+                },
+                "foreach": "@variables('ContainerGroupsToDelete')",
+                "runAfter": {
+                    "For_each_container_group_in_container_groups": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Foreach"
+            },
+            "For_each_container_group_in_container_groups": {
+                "actions": {
+                    "Condition_2": {
+                        "actions": {
+                            "Append_to_array_variable": {
+                                "inputs": {
+                                    "name": "ContainerGroupsToDelete",
+                                    "value": "@items('For_each_container_group_in_container_groups')"
+                                },
+                                "runAfter": {},
+                                "type": "AppendToArrayVariable"
+                            }
+                        },
+                        "expression": {
+                            "and": [
+                                {
+                                    "equals": [
+                                        "@variables('ContainerTerminatedCount')",
+                                        "@length(body('Get_properties_of_a_container_group')['properties']['containers'])"
+                                    ]
+                                }
+                            ]
+                        },
+                        "runAfter": {
+                            "For_each": [
+                                "Succeeded"
+                            ]
+                        },
+                        "type": "If"
+                    },
+                    "For_each": {
+                        "actions": {
+                            "Condition": {
+                                "actions": {
+                                    "Increment_variable": {
+                                        "inputs": {
+                                            "name": "ContainerTerminatedCount",
+                                            "value": 1
+                                        },
+                                        "runAfter": {},
+                                        "type": "IncrementVariable"
+                                    }
+                                },
+                                "expression": {
+                                    "and": [
+                                        {
+                                            "equals": [
+                                                "@items('For_each')?['properties']?['instanceView']?['currentState']?['state']",
+                                                "Terminated"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                "runAfter": {},
+                                "type": "If"
+                            }
+                        },
+                        "foreach": "@body('Get_properties_of_a_container_group')['properties']['containers']",
+                        "runAfter": {
+                            "Get_properties_of_a_container_group": [
+                                "Succeeded"
+                            ]
+                        },
+                        "runtimeConfiguration": {
+                            "concurrency": {
+                                "repetitions": 1
+                            }
+                        },
+                        "type": "Foreach"
+                    },
+                    "Get_properties_of_a_container_group": {
+                        "inputs": {
+                            "host": {
+                                "connection": {
+                                    "name": "@parameters('$connections')['aci']['connectionId']"
+                                }
+                            },
+                            "method": "get",
+                            "path": "/subscriptions/@{encodeURIComponent('<<subscription_id>>')}/resourceGroups/@{encodeURIComponent('<<resource_group_name>>')}/providers/Microsoft.ContainerInstance/containerGroups/@{encodeURIComponent(items('For_each_container_group_in_container_groups')?['name'])}",
+                            "queries": {
+                                "x-ms-api-version": "2019-12-01"
+                            }
+                        },
+                        "runAfter": {},
+                        "type": "ApiConnection"
+                    },
+                    "Set_variable": {
+                        "inputs": {
+                            "name": "ContainerTerminatedCount",
+                            "value": 0
+                        },
+                        "runAfter": {
+                            "Condition_2": [
+                                "Succeeded"
+                            ]
+                        },
+                        "type": "SetVariable"
+                    }
+                },
+                "foreach": "@body('Get_a_list_of_container_groups_in_a_resource_group')?['value']",
+                "runAfter": {
+                    "Get_a_list_of_container_groups_in_a_resource_group": [
+                        "Succeeded"
+                    ]
+                },
+                "runtimeConfiguration": {
+                    "concurrency": {
+                        "repetitions": 1
+                    }
+                },
+                "type": "Foreach"
+            },
+            "Get_a_list_of_container_groups_in_a_resource_group": {
+                "inputs": {
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['aci']['connectionId']"
+                        }
+                    },
+                    "method": "get",
+                    "path": "/subscriptions/@{encodeURIComponent('<<subscription_id>>')}/resourceGroups/@{encodeURIComponent('<<resource_group_name>>')}/providers/Microsoft.ContainerInstance/containerGroups",
+                    "queries": {
+                        "x-ms-api-version": "2019-12-01"
+                    }
+                },
+                "runAfter": {
+                    "Initialize_variable_2": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "ApiConnection"
+            },
+            "Initialize_variable": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "ContainerTerminatedCount",
+                            "type": "integer",
+                            "value": 0
+                        }
+                    ]
+                },
+                "runAfter": {},
+                "type": "InitializeVariable"
+            },
+            "Initialize_variable_2": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "ContainerGroupsToDelete",
+                            "type": "array"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Initialize_variable": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "InitializeVariable"
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {},
+        "parameters": {
+            "$connections": {
+                "defaultValue": {},
+                "type": "Object"
+            }
+        },
+        "triggers": {
+            "Recurrence": {
+                "recurrence": {
+                    "frequency": "Day",
+                    "interval": 1,
+                    "startTime": "2020-05-31T23:00:00Z",
+                    "timeZone": "India Standard Time"
+                },
+                "type": "Recurrence"
+            }
+        }
+    },
+    "parameters": {
+        "$connections": {
+            "value": {
+                "aci": {
+                    "connectionId": "/subscriptions/<<subscription_id>>/resourceGroups/<<resource_group_name>>/providers/Microsoft.Web/connections/aci",
+                    "connectionName": "aci",
+                    "id": "/subscriptions/<<subscription_id>>/providers/Microsoft.Web/locations/westus/managedApis/aci"
+                }
+            }
+        }
+    }
+}
