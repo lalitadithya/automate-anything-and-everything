@@ -224,6 +224,12 @@
                                                 "@items('For_each')?['properties']?['instanceView']?['currentState']?['state']",
                                                 "Terminated"
                                             ]
+                                        },
+                                        {
+                                            "lessOrEquals": [
+                                                "@items('For_each')?['properties']?['instanceView']?['currentState']?['finishTime']",
+                                                "@addDays(utcNow(), -1)"
+                                            ]
                                         }
                                     ]
                                 },
