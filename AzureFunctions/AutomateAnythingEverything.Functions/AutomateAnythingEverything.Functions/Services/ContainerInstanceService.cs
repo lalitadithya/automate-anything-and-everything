@@ -45,6 +45,7 @@ namespace AutomateAnythingEverything.Functions.Services
                                     .WithEnvironmentVariables(environmentVariables)
                                     .WithStartingCommandLine("script-runner.sh", scriptLocation)
                                     .Attach()
+                                .WithLogAnalytics(configuration["LogAnalyticsWorkspaceId"], configuration["LogAnalyticsWorkspaceKey"])
                                 .WithExistingUserAssignedManagedServiceIdentity(await azure.Identities.GetByIdAsync(configuration["UserAssignedManagedServiceIdentityId"]))
                                 .WithRestartPolicy(ContainerGroupRestartPolicy.Never)
                                 .CreateAsync();
