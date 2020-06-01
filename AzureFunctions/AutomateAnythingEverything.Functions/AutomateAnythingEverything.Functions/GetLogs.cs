@@ -22,7 +22,7 @@ namespace AutomateAnythingEverything.Functions
 
         [FunctionName("GetLogs")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest req,
             ILogger log)
         {
             log.LogInformation("Started processing request!");
