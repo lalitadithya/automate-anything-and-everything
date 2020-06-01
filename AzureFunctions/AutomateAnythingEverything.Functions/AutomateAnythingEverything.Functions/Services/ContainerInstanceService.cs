@@ -7,6 +7,7 @@ using Microsoft.Azure.Management.ResourceManager.Fluent.Core;
 using Microsoft.Azure.Management.ResourceManager.Fluent.Models;
 using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace AutomateAnythingEverything.Functions.Services
@@ -49,6 +50,17 @@ namespace AutomateAnythingEverything.Functions.Services
                                 .WithExistingUserAssignedManagedServiceIdentity(await azure.Identities.GetByIdAsync(configuration["UserAssignedManagedServiceIdentityId"]))
                                 .WithRestartPolicy(ContainerGroupRestartPolicy.Never)
                                 .CreateAsync();
+        }
+
+        public async Task<string> GetLogs(string containerGroupName)
+        {
+            var containerGroup = await azure.ContainerGroups.GetByResourceGroupAsync(configuration["ResourceGroupName"], containerGroupName);
+            StringBuilder logs = new StringBuilder();
+            foreach(var container in containerGroup.Containers)
+            {
+                logs.Append(await containerGroup.GetLogContentAsync(container.Value.Name));
+            }
+            return logs.ToString();
         }
 
         private static IAzure AuthenticateAndGetAzureInstance()
