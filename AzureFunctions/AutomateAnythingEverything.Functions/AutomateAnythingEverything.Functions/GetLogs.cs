@@ -37,13 +37,8 @@ namespace AutomateAnythingEverything.Functions
             catch (Exception e)
             {
                 log.LogInformation(e, "Unable to fetch logs from container");
+                return new NotFoundObjectResult("Can not find logs. Try quering log analytics workspace from the azure portal");
             }
-
-            string responseMessage = string.IsNullOrEmpty(taskId)
-                ? "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response."
-                : $"Hello, {taskId}. This HTTP triggered function executed successfully.";
-
-            return new OkObjectResult(responseMessage);
         }
     }
 }
