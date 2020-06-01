@@ -29,6 +29,16 @@ namespace AutomateAnythingEverything.Functions
 
             string taskId = req.Query["taskId"];
 
+            try
+            {
+                string containerLogs = await containerInstanceService.GetLogs(taskId);
+                return new OkObjectResult(containerLogs);
+            }
+            catch (Exception e)
+            {
+                log.LogInformation(e, "Unable to fetch logs from container");
+            }
+
             string responseMessage = string.IsNullOrEmpty(taskId)
                 ? "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response."
                 : $"Hello, {taskId}. This HTTP triggered function executed successfully.";
