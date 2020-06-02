@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 
 using AutomateAnythingEverything.Bot.Bots;
 using AutomateAnythingEverything.Bot.Dialogs;
+using Luis;
 
 namespace AutomateAnythingEverything.Bot
 {
@@ -39,6 +40,8 @@ namespace AutomateAnythingEverything.Bot
 
             // Register the BookingDialog.
             services.AddSingleton<BookingDialog>();
+
+            services.AddSingleton<StopVmDialog>();
 
             // The MainDialog that will be run by the bot.
             services.AddSingleton<MainDialog>();

@@ -15,6 +15,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Recognizers.Text.DataTypes.TimexExpression;
 
 using AutomateAnythingEverything.Bot.CognitiveModels;
+using Luis;
+using AutomateAnythingEverything.Bot.Models;
 
 namespace AutomateAnythingEverything.Bot.Dialogs
 {
@@ -24,7 +26,7 @@ namespace AutomateAnythingEverything.Bot.Dialogs
         protected readonly ILogger Logger;
 
         // Dependency injection uses this constructor to instantiate MainDialog
-        public MainDialog(FlightBookingRecognizer luisRecognizer, BookingDialog bookingDialog, ILogger<MainDialog> logger)
+        public MainDialog(FlightBookingRecognizer luisRecognizer, BookingDialog bookingDialog, StopVmDialog stopVmDialog, ILogger<MainDialog> logger)
             : base(nameof(MainDialog))
         {
             _luisRecognizer = luisRecognizer;
@@ -32,6 +34,7 @@ namespace AutomateAnythingEverything.Bot.Dialogs
 
             AddDialog(new TextPrompt(nameof(TextPrompt)));
             AddDialog(bookingDialog);
+            AddDialog(stopVmDialog);
             AddDialog(new WaterfallDialog(nameof(WaterfallDialog), new WaterfallStep[]
             {
                 IntroStepAsync,
@@ -68,30 +71,38 @@ namespace AutomateAnythingEverything.Bot.Dialogs
             }
 
             // Call LUIS and gather any potential booking details. (Note the TurnContext has the response to the prompt.)
-            var luisResult = await _luisRecognizer.RecognizeAsync<FlightBooking>(stepContext.Context, cancellationToken);
+            var luisResult = await _luisRecognizer.RecognizeAsync<StopVm>(stepContext.Context, cancellationToken);
             switch (luisResult.TopIntent().intent)
             {
-                case FlightBooking.Intent.BookFlight:
-                    await ShowWarningForUnsupportedCities(stepContext.Context, luisResult, cancellationToken);
-
-                    // Initialize BookingDetails with any entities we may have found in the response.
-                    var bookingDetails = new BookingDetails()
+                case StopVm.Intent.Azure_Resource_VM_Stop:
+                    var vmDetails = new VmDetails
                     {
-                        // Get destination and origin from the composite entities arrays.
-                        Destination = luisResult.ToEntities.Airport,
-                        Origin = luisResult.FromEntities.Airport,
-                        TravelDate = luisResult.TravelDate,
+                        VmName = luisResult.Entities.VmName?.FirstOrDefault(),
+                        RgName = luisResult.Entities.RgName?.FirstOrDefault()
                     };
 
-                    // Run the BookingDialog giving it whatever details we have from the LUIS call, it will fill out the remainder.
-                    return await stepContext.BeginDialogAsync(nameof(BookingDialog), bookingDetails, cancellationToken);
+                    return await stepContext.BeginDialogAsync(nameof(StopVmDialog), vmDetails, cancellationToken);
+                //case FlightBooking.Intent.BookFlight:
+                //    await ShowWarningForUnsupportedCities(stepContext.Context, luisResult, cancellationToken);
 
-                case FlightBooking.Intent.GetWeather:
-                    // We haven't implemented the GetWeatherDialog so we just display a TODO message.
-                    var getWeatherMessageText = "TODO: get weather flow here";
-                    var getWeatherMessage = MessageFactory.Text(getWeatherMessageText, getWeatherMessageText, InputHints.IgnoringInput);
-                    await stepContext.Context.SendActivityAsync(getWeatherMessage, cancellationToken);
-                    break;
+                //    // Initialize BookingDetails with any entities we may have found in the response.
+                //    var bookingDetails = new BookingDetails()
+                //    {
+                //        // Get destination and origin from the composite entities arrays.
+                //        Destination = luisResult.ToEntities.Airport,
+                //        Origin = luisResult.FromEntities.Airport,
+                //        TravelDate = luisResult.TravelDate,
+                //    };
+
+                //    // Run the BookingDialog giving it whatever details we have from the LUIS call, it will fill out the remainder.
+                //    return await stepContext.BeginDialogAsync(nameof(BookingDialog), bookingDetails, cancellationToken);
+
+                //case FlightBooking.Intent.GetWeather:
+                //    // We haven't implemented the GetWeatherDialog so we just display a TODO message.
+                //    var getWeatherMessageText = "TODO: get weather flow here";
+                //    var getWeatherMessage = MessageFactory.Text(getWeatherMessageText, getWeatherMessageText, InputHints.IgnoringInput);
+                //    await stepContext.Context.SendActivityAsync(getWeatherMessage, cancellationToken);
+                //    break;
 
                 default:
                     // Catch all for unhandled intents
