@@ -90,6 +90,9 @@ namespace AutomateAnythingEverything.Bot.Dialogs
             // the Result here will be null.
             if (stepContext.Result is VmDetails result)
             {
+                string userId = stepContext.Context.Activity.From.Id;
+                Logger.LogInformation($"{userId}");
+
                 _ = Task.Run(async () => await taskOrchestratorService.StartStopVMTask(result.VmName, result.RgName));
 
                 var messageText = $"I have started to work on stopping {result.VmName} in {result.RgName}. I will let you know when I'm done";
