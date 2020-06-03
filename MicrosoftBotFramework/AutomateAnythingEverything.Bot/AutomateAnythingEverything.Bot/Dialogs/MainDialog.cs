@@ -12,20 +12,24 @@ using Microsoft.Bot.Schema;
 using Microsoft.Extensions.Logging;
 using Luis;
 using AutomateAnythingEverything.Bot.Models;
+using AutomateAnythingEverything.Bot.Services;
 
 namespace AutomateAnythingEverything.Bot.Dialogs
 {
     public class MainDialog : ComponentDialog
     {
         private readonly A3ERecognizer _luisRecognizer;
+        private readonly TaskOrchestratorService taskOrchestratorService;
         protected readonly ILogger Logger;
 
         // Dependency injection uses this constructor to instantiate MainDialog
-        public MainDialog(A3ERecognizer luisRecognizer, StopVmDialog stopVmDialog, ILogger<MainDialog> logger)
+        public MainDialog(A3ERecognizer luisRecognizer, StopVmDialog stopVmDialog, ILogger<MainDialog> logger,
+            TaskOrchestratorService taskOrchestratorService)
             : base(nameof(MainDialog))
         {
             _luisRecognizer = luisRecognizer;
             Logger = logger;
+            this.taskOrchestratorService = taskOrchestratorService;
 
             AddDialog(new TextPrompt(nameof(TextPrompt)));
             AddDialog(stopVmDialog);
@@ -86,7 +90,7 @@ namespace AutomateAnythingEverything.Bot.Dialogs
             // the Result here will be null.
             if (stepContext.Result is VmDetails result)
             {
-                // to-do make API call
+                _ = Task.Run(async () => await taskOrchestratorService.StartStopVMTask(result.VmName, result.RgName));
 
                 var messageText = $"I have started to work on stopping {result.VmName} in {result.RgName}. I will let you know when I'm done";
                 var message = MessageFactory.Text(messageText, messageText, InputHints.IgnoringInput);
