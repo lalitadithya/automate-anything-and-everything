@@ -1,0 +1,206 @@
+{
+  "luis_schema_version": "7.0.0",
+  "intents": [
+    {
+      "name": "Azure.Resource.VM.Stop",
+      "features": []
+    },
+    {
+      "name": "None",
+      "features": []
+    }
+  ],
+  "entities": [
+    {
+      "name": "RgName",
+      "children": [],
+      "roles": [],
+      "features": []
+    },
+    {
+      "name": "VmName",
+      "children": [],
+      "roles": [],
+      "features": []
+    }
+  ],
+  "hierarchicals": [],
+  "composites": [],
+  "closedLists": [],
+  "prebuiltEntities": [],
+  "utterances": [
+    {
+      "text": "stop linux vm vm-acme in resource group rg-acme",
+      "intent": "Azure.Resource.VM.Stop",
+      "entities": [
+        {
+          "entity": "VmName",
+          "startPos": 14,
+          "endPos": 20,
+          "children": []
+        },
+        {
+          "entity": "RgName",
+          "startPos": 40,
+          "endPos": 46,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "stop my virtual machine vm-test in resource group rg-test",
+      "intent": "Azure.Resource.VM.Stop",
+      "entities": [
+        {
+          "entity": "VmName",
+          "startPos": 24,
+          "endPos": 30,
+          "children": []
+        },
+        {
+          "entity": "RgName",
+          "startPos": 50,
+          "endPos": 56,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "stop virtual machine vm in rg rg",
+      "intent": "Azure.Resource.VM.Stop",
+      "entities": [
+        {
+          "entity": "VmName",
+          "startPos": 21,
+          "endPos": 22,
+          "children": []
+        },
+        {
+          "entity": "RgName",
+          "startPos": 30,
+          "endPos": 31,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "stop virtual machine vm-lalit-test in rg lalit",
+      "intent": "Azure.Resource.VM.Stop",
+      "entities": [
+        {
+          "entity": "VmName",
+          "startPos": 21,
+          "endPos": 33,
+          "children": []
+        },
+        {
+          "entity": "RgName",
+          "startPos": 41,
+          "endPos": 45,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "stop virtual machine vm-test in resource group rg-test",
+      "intent": "Azure.Resource.VM.Stop",
+      "entities": [
+        {
+          "entity": "VmName",
+          "startPos": 21,
+          "endPos": 27,
+          "children": []
+        },
+        {
+          "entity": "RgName",
+          "startPos": 47,
+          "endPos": 53,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "stop vm vm in resource group rg",
+      "intent": "Azure.Resource.VM.Stop",
+      "entities": [
+        {
+          "entity": "VmName",
+          "startPos": 8,
+          "endPos": 9,
+          "children": []
+        },
+        {
+          "entity": "RgName",
+          "startPos": 29,
+          "endPos": 30,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "stop vm vm-lalit in rg rg-lalit",
+      "intent": "Azure.Resource.VM.Stop",
+      "entities": [
+        {
+          "entity": "VmName",
+          "startPos": 8,
+          "endPos": 15,
+          "children": []
+        },
+        {
+          "entity": "RgName",
+          "startPos": 23,
+          "endPos": 30,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "stop vm vm-lalit in rg-lalit",
+      "intent": "Azure.Resource.VM.Stop",
+      "entities": [
+        {
+          "entity": "VmName",
+          "startPos": 8,
+          "endPos": 15,
+          "children": []
+        },
+        {
+          "entity": "RgName",
+          "startPos": 20,
+          "endPos": 27,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "stop windows virtual machine vm-acme-devtest in resource group rg-acme-devtest",
+      "intent": "Azure.Resource.VM.Stop",
+      "entities": [
+        {
+          "entity": "VmName",
+          "startPos": 29,
+          "endPos": 43,
+          "children": []
+        },
+        {
+          "entity": "RgName",
+          "startPos": 63,
+          "endPos": 77,
+          "children": []
+        }
+      ]
+    }
+  ],
+  "versionId": "0.1",
+  "name": "a3e-basic",
+  "desc": "Basic prediction for a3e",
+  "culture": "en-us",
+  "tokenizerVersion": "1.0.0",
+  "patternAnyEntities": [],
+  "regex_entities": [],
+  "phraselists": [],
+  "regex_features": [],
+  "patterns": [],
+  "settings": []
+}
