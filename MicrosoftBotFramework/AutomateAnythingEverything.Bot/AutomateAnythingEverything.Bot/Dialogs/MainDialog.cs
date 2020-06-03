@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using Luis;
 using AutomateAnythingEverything.Bot.Models;
 using AutomateAnythingEverything.Bot.Services;
+using System;
 
 namespace AutomateAnythingEverything.Bot.Dialogs
 {
@@ -91,9 +92,11 @@ namespace AutomateAnythingEverything.Bot.Dialogs
             if (stepContext.Result is VmDetails result)
             {
                 string userId = stepContext.Context.Activity.From.Id;
-                Logger.LogInformation($"{userId}");
+                string taskId = Guid.NewGuid().ToString();
 
-                _ = Task.Run(async () => await taskOrchestratorService.StartStopVMTask(result.VmName, result.RgName));
+                Logger.LogInformation($"{userId} - {taskId}");
+
+                _ = Task.Run(async () => await taskOrchestratorService.StartStopVMTask(result.VmName, result.RgName, userId, taskId));
 
                 var messageText = $"I have started to work on stopping {result.VmName} in {result.RgName}. I will let you know when I'm done";
                 var message = MessageFactory.Text(messageText, messageText, InputHints.IgnoringInput);
