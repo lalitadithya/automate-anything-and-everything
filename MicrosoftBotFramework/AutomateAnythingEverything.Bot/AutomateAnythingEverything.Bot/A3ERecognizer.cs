@@ -9,11 +9,11 @@ using Microsoft.Extensions.Configuration;
 
 namespace AutomateAnythingEverything.Bot
 {
-    public class FlightBookingRecognizer : IRecognizer
+    public class A3ERecognizer : IRecognizer
     {
         private readonly LuisRecognizer _recognizer;
 
-        public FlightBookingRecognizer(IConfiguration configuration)
+        public A3ERecognizer(IConfiguration configuration)
         {
             var luisIsConfigured = !string.IsNullOrEmpty(configuration["LuisAppId"]) && !string.IsNullOrEmpty(configuration["LuisAPIKey"]) && !string.IsNullOrEmpty(configuration["LuisAPIHostName"]);
             if (luisIsConfigured)

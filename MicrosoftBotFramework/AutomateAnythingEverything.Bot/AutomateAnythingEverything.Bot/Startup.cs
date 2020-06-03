@@ -36,10 +36,7 @@ namespace AutomateAnythingEverything.Bot
             services.AddSingleton<ConversationState>();
 
             // Register LUIS recognizer
-            services.AddSingleton<FlightBookingRecognizer>();
-
-            // Register the BookingDialog.
-            services.AddSingleton<BookingDialog>();
+            services.AddSingleton<A3ERecognizer>();
 
             services.AddSingleton<StopVmDialog>();
 

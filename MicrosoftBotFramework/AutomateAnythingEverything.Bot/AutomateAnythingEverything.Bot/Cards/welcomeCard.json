@@ -13,7 +13,7 @@
       "spacing": "medium",
       "size": "default",
       "weight": "bolder",
-      "text": "Welcome to Bot Framework!",
+      "text": "Welcome to Automate Anything and Everything!",
       "wrap": true,
       "maxLines": 0
     },
@@ -21,7 +21,7 @@
       "type": "TextBlock",
       "size": "default",
       "isSubtle": true,
-      "text": "Now that you have successfully run your bot, follow the links in this Adaptive Card to expand your knowledge of Bot Framework.",
+      "text": "Please follow the links in this Card to expand your knowledge of Automate Anything and Everything.",
       "wrap": true,
       "maxLines": 0
     }
@@ -30,17 +30,12 @@
     {
       "type": "Action.OpenUrl",
       "title": "Get an overview",
-      "url": "https://docs.microsoft.com/en-us/azure/bot-service/?view=azure-bot-service-4.0"
+      "url": "https://github.com/lalitadithya/automate-anything-and-everything"
     },
     {
       "type": "Action.OpenUrl",
       "title": "Ask a question",
-      "url": "https://stackoverflow.com/questions/tagged/botframework"
-    },
-    {
-      "type": "Action.OpenUrl",
-      "title": "Learn how to deploy",
-      "url": "https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-howto-deploy-azure?view=azure-bot-service-4.0"
+      "url": "https://github.com/lalitadithya/automate-anything-and-everything/issues"
     }
   ]
 }

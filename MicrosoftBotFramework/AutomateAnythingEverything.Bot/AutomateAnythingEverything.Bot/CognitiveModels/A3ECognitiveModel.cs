@@ -10,7 +10,7 @@ using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.AI.Luis;
 namespace Luis
 {
-    public partial class StopVm: IRecognizerConvert
+    public partial class A3ECognitiveModel: IRecognizerConvert
     {
         [JsonProperty("text")]
         public string Text;
@@ -49,7 +49,7 @@ namespace Luis
 
         public void Convert(dynamic result)
         {
-            var app = JsonConvert.DeserializeObject<StopVm>(JsonConvert.SerializeObject(result, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }));
+            var app = JsonConvert.DeserializeObject<A3ECognitiveModel>(JsonConvert.SerializeObject(result, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }));
             Text = app.Text;
             AlteredText = app.AlteredText;
             Intents = app.Intents;

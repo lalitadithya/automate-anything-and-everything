@@ -20,7 +20,6 @@ namespace AutomateAnythingEverything.Bot.Dialogs
         {
             AddDialog(new TextPrompt(nameof(TextPrompt)));
             AddDialog(new ConfirmPrompt(nameof(ConfirmPrompt)));
-            AddDialog(new DateResolverDialog());
             AddDialog(new WaterfallDialog(nameof(WaterfallDialog), new WaterfallStep[]
             {
                 VmNameStepAsync,
@@ -77,8 +76,6 @@ namespace AutomateAnythingEverything.Bot.Dialogs
             if ((bool)stepContext.Result)
             {
                 var vmDetails = (VmDetails)stepContext.Options;
-
-                // do somthing.
 
                 return await stepContext.EndDialogAsync(vmDetails, cancellationToken);
             }
