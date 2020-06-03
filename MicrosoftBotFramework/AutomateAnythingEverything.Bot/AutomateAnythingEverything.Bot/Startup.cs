@@ -14,6 +14,7 @@ using AutomateAnythingEverything.Bot.Bots;
 using AutomateAnythingEverything.Bot.Dialogs;
 using Luis;
 using AutomateAnythingEverything.Bot.Services;
+using AutomateAnythingEverything.Bot.DataAccessObjects;
 
 namespace AutomateAnythingEverything.Bot
 {
@@ -40,6 +41,8 @@ namespace AutomateAnythingEverything.Bot
             services.AddSingleton<A3ERecognizer>();
 
             services.AddSingleton<StopVmDialog>();
+
+            services.AddSingleton<ConversationReferenceDao>();
 
             // The MainDialog that will be run by the bot.
             services.AddSingleton<MainDialog>();

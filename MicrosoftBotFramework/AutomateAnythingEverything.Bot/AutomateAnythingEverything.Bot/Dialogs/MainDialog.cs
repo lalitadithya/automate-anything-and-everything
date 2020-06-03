@@ -14,6 +14,7 @@ using Luis;
 using AutomateAnythingEverything.Bot.Models;
 using AutomateAnythingEverything.Bot.Services;
 using System;
+using AutomateAnythingEverything.Bot.DataAccessObjects;
 
 namespace AutomateAnythingEverything.Bot.Dialogs
 {
@@ -21,16 +22,19 @@ namespace AutomateAnythingEverything.Bot.Dialogs
     {
         private readonly A3ERecognizer _luisRecognizer;
         private readonly TaskOrchestratorService taskOrchestratorService;
+        private readonly ConversationReferenceDao conversationReferenceDao;
+
         protected readonly ILogger Logger;
 
         // Dependency injection uses this constructor to instantiate MainDialog
         public MainDialog(A3ERecognizer luisRecognizer, StopVmDialog stopVmDialog, ILogger<MainDialog> logger,
-            TaskOrchestratorService taskOrchestratorService)
+            TaskOrchestratorService taskOrchestratorService, ConversationReferenceDao conversationReferenceDao)
             : base(nameof(MainDialog))
         {
             _luisRecognizer = luisRecognizer;
             Logger = logger;
             this.taskOrchestratorService = taskOrchestratorService;
+            this.conversationReferenceDao = conversationReferenceDao;
 
             AddDialog(new TextPrompt(nameof(TextPrompt)));
             AddDialog(stopVmDialog);
@@ -91,12 +95,24 @@ namespace AutomateAnythingEverything.Bot.Dialogs
             // the Result here will be null.
             if (stepContext.Result is VmDetails result)
             {
+                var conversationReference = stepContext.Context.Activity.GetConversationReference();
                 string userId = stepContext.Context.Activity.From.Id;
                 string taskId = Guid.NewGuid().ToString();
 
                 Logger.LogInformation($"{userId} - {taskId}");
 
-                _ = Task.Run(async () => await taskOrchestratorService.StartStopVMTask(result.VmName, result.RgName, userId, taskId));
+                _ = Task.Run(async () =>
+                {
+                    try
+                    {
+                        conversationReferenceDao.SaveConversationReference(userId, conversationReference);
+                        await taskOrchestratorService.StartStopVMTask(result.VmName, result.RgName, userId, taskId);
+                    }
+                    catch (Exception e)
+                    {
+                        //TODO remove conversation reference
+                    }
+                });
 
                 var messageText = $"I have started to work on stopping {result.VmName} in {result.RgName}. I will let you know when I'm done";
                 var message = MessageFactory.Text(messageText, messageText, InputHints.IgnoringInput);
