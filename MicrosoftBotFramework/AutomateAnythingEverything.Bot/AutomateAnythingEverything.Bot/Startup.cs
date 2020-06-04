@@ -68,6 +68,7 @@ namespace AutomateAnythingEverything.Bot
             services.AddTransient<IBot, DialogAndWelcomeBot<MainDialog>>();
 
             services.AddTransient<TaskOrchestratorService>();
+            services.AddApplicationInsightsTelemetry();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
