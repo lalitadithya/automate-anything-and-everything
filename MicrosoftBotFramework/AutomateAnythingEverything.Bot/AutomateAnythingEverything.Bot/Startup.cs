@@ -15,12 +15,21 @@ using AutomateAnythingEverything.Bot.Dialogs;
 using Luis;
 using AutomateAnythingEverything.Bot.Services;
 using AutomateAnythingEverything.Bot.DataAccessObjects;
+using Microsoft.Bot.Builder.Azure;
+using System.Configuration;
+using Microsoft.Extensions.Configuration;
 
 namespace AutomateAnythingEverything.Bot
 {
     public class Startup
     {
-        // This method gets called by the runtime. Use this method to add services to the container.
+        private readonly IConfiguration configuration;
+
+        public Startup(IConfiguration configuration)
+        {
+            this.configuration = configuration;
+        }
+
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers().AddNewtonsoftJson();
@@ -29,7 +38,14 @@ namespace AutomateAnythingEverything.Bot
             services.AddSingleton<IBotFrameworkHttpAdapter, AdapterWithErrorHandler>();
 
             // Create the storage we'll be using for User and Conversation state. (Memory is great for testing purposes.)
-            services.AddSingleton<IStorage, MemoryStorage>();
+            services.AddSingleton<IStorage>(new CosmosDbPartitionedStorage(new CosmosDbPartitionedStorageOptions()
+            {
+                AuthKey = configuration["CosmosDbAuthKey"],
+                ContainerId = configuration["CosmosDbContainerId"],
+                DatabaseId = configuration["CosmosDbDatabaseId"],
+                CosmosDbEndpoint = configuration["CosmosDbEndpoint"],
+                CompatibilityMode = false
+            }));
 
             // Create the User state. (Used in this bot's Dialog implementation.)
             services.AddSingleton<UserState>();
