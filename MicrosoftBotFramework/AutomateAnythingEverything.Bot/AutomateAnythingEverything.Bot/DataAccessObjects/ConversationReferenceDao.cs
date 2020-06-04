@@ -1,7 +1,12 @@
-﻿using Microsoft.Bot.Schema;
+﻿using AutomateAnythingEverything.Bot.Models;
+using Microsoft.Azure.Cosmos;
+using Microsoft.Bot.Schema;
+using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -9,21 +14,31 @@ namespace AutomateAnythingEverything.Bot.DataAccessObjects
 {
     public class ConversationReferenceDao
     {
-        private ConcurrentDictionary<string, ConversationReference> conversationReferences;
+        private readonly Container conversationReferencesContainer;
 
-        public ConversationReferenceDao()
+        public ConversationReferenceDao(CosmosClient cosmosClient, IConfiguration configuration)
         {
-            conversationReferences = new ConcurrentDictionary<string, ConversationReference>();
+            conversationReferencesContainer = cosmosClient.GetContainer(configuration["BotStorageDatabaseId"], configuration["BotStorageContainerId"]);
         }
 
-        public void SaveConversationReference(string userId, ConversationReference conversationReference)
+        public void SaveConversationReference(string userId, string taskId, ConversationReference conversationReference, 
+            string successMessage, string failureMessage)
         {
-            conversationReferences.AddOrUpdate(userId, conversationReference, (key, newValue) => conversationReference);
+            conversationReferencesContainer.CreateItemAsync(new UserTaskRequest
+            {
+                Id = taskId,
+                ConversationReference = JsonConvert.SerializeObject(conversationReference, Formatting.None),
+                MessagePromptSuccess = successMessage,
+                UserId = userId,
+                MessagePromptFailure = failureMessage
+            }, new PartitionKey(userId));
         }
 
-        public ConversationReference GetConversationReference(string userId)
+        public async Task<(ConversationReference, string, string)> GetConversationReference(string taskId, string userId)
         {
-            return conversationReferences[userId];
+            var result = await conversationReferencesContainer.ReadItemAsync<UserTaskRequest>(taskId, new PartitionKey(userId));
+            return (JsonConvert.DeserializeObject<ConversationReference>(result.Resource.ConversationReference), 
+                result.Resource.MessagePromptSuccess, result.Resource.MessagePromptFailure);
         }
     }
 }

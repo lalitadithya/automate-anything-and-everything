@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutomateAnythingEverything.Bot.DataAccessObjects;
+using AutomateAnythingEverything.Bot.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Bot.Builder;
@@ -33,16 +34,19 @@ namespace AutomateAnythingEverything.Bot.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromQuery]string userId, [FromQuery]string taskId)
+        public async Task<IActionResult> Post([FromQuery]string userId, [FromQuery]string taskId, [FromBody]TaskResultModel taskResultModel)
         {
-            await ((BotAdapter)_adapter).ContinueConversationAsync(_appId, conversationReferenceDao.GetConversationReference(userId), 
-                async (context, token) => await BotCallback(taskId, context, token), default);
+            var conversation = await conversationReferenceDao.GetConversationReference(taskId, userId);
+            string messageToSend = taskResultModel.TaskStatus ? conversation.Item2 : conversation.Item3;
+
+            await ((BotAdapter)_adapter).ContinueConversationAsync(_appId, conversation.Item1, 
+                async (context, token) => await BotCallback(messageToSend, context, token), default);
             return Ok();
         }
 
-        private async Task BotCallback(string taskId, ITurnContext turnContext, CancellationToken cancellationToken)
+        private async Task BotCallback(string message, ITurnContext turnContext, CancellationToken cancellationToken)
         {
-            await turnContext.SendActivityAsync($"Hi there! I have an update about your task {taskId}");
+            await turnContext.SendActivityAsync(message);
         }
     }
 }

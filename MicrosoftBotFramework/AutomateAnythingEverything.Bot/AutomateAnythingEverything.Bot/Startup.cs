@@ -18,6 +18,7 @@ using AutomateAnythingEverything.Bot.DataAccessObjects;
 using Microsoft.Bot.Builder.Azure;
 using System.Configuration;
 using Microsoft.Extensions.Configuration;
+using System.Threading.Tasks;
 
 namespace AutomateAnythingEverything.Bot
 {
@@ -58,7 +59,7 @@ namespace AutomateAnythingEverything.Bot
 
             services.AddSingleton<StopVmDialog>();
 
-            services.AddSingleton<ConversationReferenceDao>();
+            services.AddSingleton(InitializeCosmosClientInstance());
 
             // The MainDialog that will be run by the bot.
             services.AddSingleton<MainDialog>();
@@ -88,6 +89,21 @@ namespace AutomateAnythingEverything.Bot
                 });
 
             // app.UseHttpsRedirection();
+        }
+
+        private ConversationReferenceDao InitializeCosmosClientInstance()
+        {
+            string account = configuration["CosmosDbEndpoint"];
+            string key = configuration["CosmosDbAuthKey"];
+            Microsoft.Azure.Cosmos.Fluent.CosmosClientBuilder clientBuilder = new Microsoft.Azure.Cosmos.Fluent.CosmosClientBuilder(account, key);
+
+            Microsoft.Azure.Cosmos.CosmosClient client = clientBuilder
+                                .WithConnectionModeDirect()
+                                .Build();
+
+            ConversationReferenceDao cosmosDbService = new ConversationReferenceDao(client, configuration);
+
+            return cosmosDbService;
         }
     }
 }

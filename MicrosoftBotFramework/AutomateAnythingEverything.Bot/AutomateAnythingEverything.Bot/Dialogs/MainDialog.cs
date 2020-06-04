@@ -98,6 +98,8 @@ namespace AutomateAnythingEverything.Bot.Dialogs
                 var conversationReference = stepContext.Context.Activity.GetConversationReference();
                 string userId = stepContext.Context.Activity.From.Id;
                 string taskId = Guid.NewGuid().ToString();
+                string successMessage = $"I have successfully stopped {result.VmName} in {result.RgName}";
+                string failureMessage = $"Oops! I was not able to stop {result.VmName} in {result.RgName}. Please try again later. Operation correlation id {taskId}";
 
                 Logger.LogInformation($"{userId} - {taskId}");
 
@@ -105,7 +107,7 @@ namespace AutomateAnythingEverything.Bot.Dialogs
                 {
                     try
                     {
-                        conversationReferenceDao.SaveConversationReference(userId, conversationReference);
+                        conversationReferenceDao.SaveConversationReference(userId, taskId, conversationReference, successMessage, failureMessage);
                         await taskOrchestratorService.StartStopVMTask(result.VmName, result.RgName, userId, taskId);
                     }
                     catch (Exception e)
