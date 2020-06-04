@@ -14,12 +14,23 @@ using AutomateAnythingEverything.Bot.Bots;
 using AutomateAnythingEverything.Bot.Dialogs;
 using Luis;
 using AutomateAnythingEverything.Bot.Services;
+using AutomateAnythingEverything.Bot.DataAccessObjects;
+using Microsoft.Bot.Builder.Azure;
+using System.Configuration;
+using Microsoft.Extensions.Configuration;
+using System.Threading.Tasks;
 
 namespace AutomateAnythingEverything.Bot
 {
     public class Startup
     {
-        // This method gets called by the runtime. Use this method to add services to the container.
+        private readonly IConfiguration configuration;
+
+        public Startup(IConfiguration configuration)
+        {
+            this.configuration = configuration;
+        }
+
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers().AddNewtonsoftJson();
@@ -28,7 +39,14 @@ namespace AutomateAnythingEverything.Bot
             services.AddSingleton<IBotFrameworkHttpAdapter, AdapterWithErrorHandler>();
 
             // Create the storage we'll be using for User and Conversation state. (Memory is great for testing purposes.)
-            services.AddSingleton<IStorage, MemoryStorage>();
+            services.AddSingleton<IStorage>(new CosmosDbPartitionedStorage(new CosmosDbPartitionedStorageOptions()
+            {
+                AuthKey = configuration["CosmosDbAuthKey"],
+                ContainerId = configuration["CosmosDbContainerId"],
+                DatabaseId = configuration["CosmosDbDatabaseId"],
+                CosmosDbEndpoint = configuration["CosmosDbEndpoint"],
+                CompatibilityMode = false
+            }));
 
             // Create the User state. (Used in this bot's Dialog implementation.)
             services.AddSingleton<UserState>();
@@ -41,6 +59,8 @@ namespace AutomateAnythingEverything.Bot
 
             services.AddSingleton<StopVmDialog>();
 
+            services.AddSingleton(InitializeCosmosClientInstance());
+
             // The MainDialog that will be run by the bot.
             services.AddSingleton<MainDialog>();
 
@@ -48,6 +68,7 @@ namespace AutomateAnythingEverything.Bot
             services.AddTransient<IBot, DialogAndWelcomeBot<MainDialog>>();
 
             services.AddTransient<TaskOrchestratorService>();
+            services.AddApplicationInsightsTelemetry();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -69,6 +90,21 @@ namespace AutomateAnythingEverything.Bot
                 });
 
             // app.UseHttpsRedirection();
+        }
+
+        private ConversationReferenceDao InitializeCosmosClientInstance()
+        {
+            string account = configuration["CosmosDbEndpoint"];
+            string key = configuration["CosmosDbAuthKey"];
+            Microsoft.Azure.Cosmos.Fluent.CosmosClientBuilder clientBuilder = new Microsoft.Azure.Cosmos.Fluent.CosmosClientBuilder(account, key);
+
+            Microsoft.Azure.Cosmos.CosmosClient client = clientBuilder
+                                .WithConnectionModeDirect()
+                                .Build();
+
+            ConversationReferenceDao cosmosDbService = new ConversationReferenceDao(client, configuration);
+
+            return cosmosDbService;
         }
     }
 }

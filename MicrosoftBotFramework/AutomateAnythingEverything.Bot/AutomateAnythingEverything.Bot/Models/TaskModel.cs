@@ -11,6 +11,9 @@ namespace AutomateAnythingEverything.Bot.Models
         [JsonProperty("taskName")]
         public string TaskName { get; set; }
 
+        [JsonProperty("callbackUri")]
+        public string CallbackUri { get; set; }
+
         [JsonProperty("parameters")]
         public List<TaskParametersModel> TaskParameters { get; set; }
     }
