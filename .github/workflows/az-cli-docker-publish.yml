@@ -19,4 +19,4 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
           repository: lalitadithya/az-cli-image
           tags: latest
-          path: ./WorkerImages/AzCliImage/
+          path: WorkerImages/AzCliImage/
