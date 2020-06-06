@@ -24,7 +24,7 @@ jobs:
         run: |
           pushd './${{ env.AZURE_WEBAPP_PACKAGE_PATH }}'
           dotnet build --configuration Release
-          dotnet publish -c Release -o './chatbot' 
+          dotnet publish -c Release -o ./output
           popd
           
       - name: 'Run Azure webapp deploy action using publish profile credentials'
@@ -32,4 +32,4 @@ jobs:
         with: 
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE  }}
-          package: './chatbot/'
+          package: '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/output'
