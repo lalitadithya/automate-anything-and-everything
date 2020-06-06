@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+    paths: ['WorkerImages/AzCliImage/**']
 
 jobs:
   build-and-push:
