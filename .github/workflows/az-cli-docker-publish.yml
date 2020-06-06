@@ -1,0 +1,24 @@
+name: Az CLI Docker Push
+
+on:
+  push:
+    branches:
+      - master
+    paths: ['WorkerImages/AzCliImage/**']
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Build and push Docker images
+        uses: docker/build-push-action@v1.1.0
+        with:
+          username: lalitadithya
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+          repository: lalitadithya/az-cli-image
+          tags: latest
+          path: WorkerImages/AzCliImage/
+          dockerfile: WorkerImages/AzCliImage/DockerFile 
