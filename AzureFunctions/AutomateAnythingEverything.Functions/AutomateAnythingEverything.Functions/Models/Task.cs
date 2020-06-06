@@ -9,7 +9,11 @@ namespace AutomateAnythingEverything.Functions.Models
     {
         [JsonProperty("taskName")]
         public string TaskName { get; set; }
+
         [JsonProperty("parameters")]
         public List<TaskParameters> Parameters { get; set; }
+
+        [JsonProperty("callbackUri")]
+        public string CallbackUri { get; set; }
     }
 }
