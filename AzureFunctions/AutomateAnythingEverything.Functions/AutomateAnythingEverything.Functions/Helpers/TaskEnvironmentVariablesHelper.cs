@@ -10,9 +10,18 @@ namespace AutomateAnythingEverything.Functions.Helpers
     {
         public static Dictionary<string, string> ConstructEnvionmentVariables(Task task, TaskDefinition taskDefinition)
         {
-            return taskDefinition.ScriptParameters
-                                .ToDictionary(x => x.ParameterName, 
-                                                x => task.Parameters.FirstOrDefault(y => x.ParameterName == y.Name)?.Value);
+            Dictionary<string, string> environmentVariables;
+
+            environmentVariables = taskDefinition.ScriptParameters
+                                                .ToDictionary(x => x.ParameterName,
+                                                                x => task.Parameters.FirstOrDefault(y => x.ParameterName == y.Name)?.Value);
+
+            if(!string.IsNullOrWhiteSpace(task.CallbackUri))
+            {
+                environmentVariables.Add("CallbackURI", task.CallbackUri);
+            }
+
+            return environmentVariables;
         }
     }
 }
