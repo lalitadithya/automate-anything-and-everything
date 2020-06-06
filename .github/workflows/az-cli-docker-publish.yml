@@ -20,3 +20,4 @@ jobs:
           repository: lalitadithya/az-cli-image
           tags: latest
           path: WorkerImages/AzCliImage/
+          dockerfile: WorkerImages/AzCliImage/DockerFile 
