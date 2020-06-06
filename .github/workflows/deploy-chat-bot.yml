@@ -3,6 +3,7 @@ name: Deploy Chat Bot to Azure Web Apps
 on:
   push:
     branches: [ master ]
+    paths: ['MicrosoftBotFramework/AutomateAnythingEverything.Bot/**']
 
 env:
   AZURE_WEBAPP_NAME: a3e-bot-dev    
