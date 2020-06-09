@@ -1,0 +1,2037 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {},
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.BotService/botServices",
+            "apiVersion": "2018-07-12",
+            "name": "a3e-bot-dev",
+            "location": "global",
+            "sku": {
+                "name": "F0"
+            },
+            "kind": "bot",
+            "properties": {
+                "displayName": "a3e-bot-dev",
+                "iconUrl": "https://docs.botframework.com/static/devportal/client/images/bot-framework-default.png",
+                "endpoint": "https://a3e-bot-dev.azurewebsites.net/api/messages",
+                "msaAppId": "<<MSA App Id>>",
+                "developerAppInsightKey": "<<app insights>>",
+                "developerAppInsightsApplicationId": "<<app insights application id>>",
+                "luisAppIds": []
+            }
+        },
+        {
+            "type": "Microsoft.CognitiveServices/accounts",
+            "apiVersion": "2017-04-18",
+            "name": "luis-a3e-dev",
+            "location": "westus",
+            "sku": {
+                "name": "F0"
+            },
+            "kind": "LUIS",
+            "properties": {
+                "customSubDomainName": "luis-a3e-dev",
+                "privateEndpointConnections": [],
+                "publicNetworkAccess": "Enabled"
+            }
+        },
+        {
+            "type": "Microsoft.CognitiveServices/accounts",
+            "apiVersion": "2017-04-18",
+            "name": "luis-a3e-dev-Authoring",
+            "location": "westus",
+            "sku": {
+                "name": "F0"
+            },
+            "kind": "LUIS.Authoring",
+            "properties": {
+                "customSubDomainName": "luis-a3e-dev-authoring",
+                "privateEndpointConnections": [],
+                "publicNetworkAccess": "Enabled"
+            }
+        },
+        {
+            "type": "Microsoft.DocumentDB/databaseAccounts",
+            "apiVersion": "2020-04-01",
+            "name": "cosmos-a3e",
+            "location": "West US",
+            "tags": {
+                "defaultExperience": "Core (SQL)",
+                "hidden-cosmos-mmspecial": "",
+                "CosmosAccountType": "Non-Production"
+            },
+            "kind": "GlobalDocumentDB",
+            "properties": {
+                "publicNetworkAccess": "Enabled",
+                "enableAutomaticFailover": false,
+                "enableMultipleWriteLocations": false,
+                "isVirtualNetworkFilterEnabled": false,
+                "virtualNetworkRules": [],
+                "disableKeyBasedMetadataWriteAccess": false,
+                "enableFreeTier": true,
+                "enableAnalyticalStorage": false,
+                "databaseAccountOfferType": "Standard",
+                "consistencyPolicy": {
+                    "defaultConsistencyLevel": "Session",
+                    "maxIntervalInSeconds": 5,
+                    "maxStalenessPrefix": 100
+                },
+                "locations": [
+                    {
+                        "locationName": "West US",
+                        "provisioningState": "Succeeded",
+                        "failoverPriority": 0,
+                        "isZoneRedundant": false
+                    }
+                ],
+                "capabilities": [],
+                "ipRules": []
+            }
+        },
+        {
+            "type": "microsoft.insights/actionGroups",
+            "apiVersion": "2019-03-01",
+            "name": "Application Insights Smart Detection",
+            "location": "Global",
+            "properties": {
+                "groupShortName": "SmartDetect",
+                "enabled": true,
+                "emailReceivers": [],
+                "smsReceivers": [],
+                "webhookReceivers": [],
+                "itsmReceivers": [],
+                "azureAppPushReceivers": [],
+                "automationRunbookReceivers": [],
+                "voiceReceivers": [],
+                "logicAppReceivers": [],
+                "azureFunctionReceivers": []
+            }
+        },
+        {
+            "type": "microsoft.operationalinsights/workspaces",
+            "apiVersion": "2020-03-01-preview",
+            "name": "law-a3e",
+            "location": "westus",
+            "properties": {
+                "provisioningState": "Succeeded",
+                "sku": {
+                    "name": "pergb2018"
+                },
+                "retentionInDays": 30,
+                "publicNetworkAccessForIngestion": "Enabled",
+                "publicNetworkAccessForQuery": "Enabled"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2019-06-01",
+            "name": "saa3edev",
+            "location": "westus",
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "kind": "StorageV2",
+            "properties": {
+                "largeFileSharesState": "Disabled",
+                "networkAcls": {
+                    "bypass": "AzureServices",
+                    "virtualNetworkRules": [],
+                    "ipRules": [],
+                    "defaultAction": "Allow"
+                },
+                "supportsHttpsTrafficOnly": true,
+                "encryption": {
+                    "services": {
+                        "file": {
+                            "keyType": "Account",
+                            "enabled": true
+                        },
+                        "blob": {
+                            "keyType": "Account",
+                            "enabled": true
+                        }
+                    },
+                    "keySource": "Microsoft.Storage"
+                },
+                "accessTier": "Hot"
+            }
+        },
+        {
+            "type": "Microsoft.Web/connections",
+            "apiVersion": "2016-06-01",
+            "name": "aci",
+            "location": "westus",
+            "properties": {
+                "displayName": "lalit@lalitadithya.com",
+                "customParameterValues": {},
+                "api": {
+                    "id": "/subscriptions/<<subscription id>>/providers/Microsoft.Web/locations/westus/managedApis/aci"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Web/serverfarms",
+            "apiVersion": "2018-02-01",
+            "name": "asp-a3e-bot-dev",
+            "location": "West US",
+            "sku": {
+                "name": "F1",
+                "tier": "Free",
+                "size": "F1",
+                "family": "F",
+                "capacity": 0
+            },
+            "kind": "app",
+            "properties": {
+                "perSiteScaling": false,
+                "maximumElasticWorkerCount": 1,
+                "isSpot": false,
+                "reserved": false,
+                "isXenon": false,
+                "hyperV": false,
+                "targetWorkerCount": 0,
+                "targetWorkerSizeId": 0
+            }
+        },
+        {
+            "type": "Microsoft.Web/serverfarms",
+            "apiVersion": "2018-02-01",
+            "name": "ASP-rga3edev-8229",
+            "location": "West US",
+            "sku": {
+                "name": "Y1",
+                "tier": "Dynamic",
+                "size": "Y1",
+                "family": "Y",
+                "capacity": 0
+            },
+            "kind": "functionapp",
+            "properties": {
+                "perSiteScaling": false,
+                "maximumElasticWorkerCount": 1,
+                "isSpot": false,
+                "reserved": false,
+                "isXenon": false,
+                "hyperV": false,
+                "targetWorkerCount": 0,
+                "targetWorkerSizeId": 0
+            }
+        },
+        {
+            "type": "microsoft.alertsmanagement/smartdetectoralertrules",
+            "apiVersion": "2019-06-01",
+            "name": "failure anomalies - a3e-bot-dev7yeftb",
+            "location": "global",
+            "dependsOn": [
+                "[resourceId('microsoft.insights/actionGroups', 'Application Insights Smart Detection')]"
+            ],
+            "properties": {
+                "description": "Failure Anomalies notifies you of an unusual rise in the rate of failed HTTP requests or dependency calls.",
+                "state": "Enabled",
+                "severity": "Sev3",
+                "frequency": "PT1M",
+                "detector": {
+                    "id": "FailureAnomaliesDetector",
+                    "name": "Failure Anomalies",
+                    "description": "Detects if your application experiences an abnormal rise in the rate of HTTP requests or dependency calls that are reported as failed. The anomaly detection uses machine learning algorithms and occurs in near real time, therefore there's no need to define a frequency for this signal.<br/></br/>To help you triage and diagnose the problem, an analysis of the characteristics of the failures and related telemetry is provided with the detection. This feature works for any app, hosted in the cloud or on your own servers, that generates request or dependency telemetry - for example, if you have a worker role that calls <a class=\"ext-smartDetecor-link\" href=\\\"https://docs.microsoft.com/azure/application-insights/app-insights-api-custom-events-metrics#trackrequest\\\" target=\\\"_blank\\\">TrackRequest()</a> or <a class=\"ext-smartDetecor-link\" href=\\\"https://docs.microsoft.com/azure/application-insights/app-insights-api-custom-events-metrics#trackdependency\\\" target=\\\"_blank\\\">TrackDependency()</a>.<br/><br/><a class=\"ext-smartDetecor-link\" href=\\\"https://docs.microsoft.com/azure/azure-monitor/app/proactive-failure-diagnostics\\\" target=\\\"_blank\\\">Learn more about Failure Anomalies</a>",
+                    "supportedResourceTypes": [
+                        "ApplicationInsights"
+                    ]
+                },
+                "scope": [
+                    "/subscriptions/<<subscription id>>/resourcegroups/rg-a3e-dev/providers/microsoft.insights/components/a3e-bot-dev7yeftb"
+                ],
+                "actionGroups": {
+                    "groupIds": [
+                        "[resourceId('microsoft.insights/actionGroups', 'Application Insights Smart Detection')]"
+                    ]
+                }
+            }
+        },
+        {
+            "type": "microsoft.alertsmanagement/smartdetectoralertrules",
+            "apiVersion": "2019-06-01",
+            "name": "failure anomalies - ai-a3e-task-orchestrator-dev",
+            "location": "global",
+            "dependsOn": [
+                "[resourceId('microsoft.insights/actionGroups', 'Application Insights Smart Detection')]"
+            ],
+            "properties": {
+                "description": "Failure Anomalies notifies you of an unusual rise in the rate of failed HTTP requests or dependency calls.",
+                "state": "Enabled",
+                "severity": "Sev3",
+                "frequency": "PT1M",
+                "detector": {
+                    "id": "FailureAnomaliesDetector",
+                    "name": "Failure Anomalies",
+                    "description": "Detects if your application experiences an abnormal rise in the rate of HTTP requests or dependency calls that are reported as failed. The anomaly detection uses machine learning algorithms and occurs in near real time, therefore there's no need to define a frequency for this signal.<br/></br/>To help you triage and diagnose the problem, an analysis of the characteristics of the failures and related telemetry is provided with the detection. This feature works for any app, hosted in the cloud or on your own servers, that generates request or dependency telemetry - for example, if you have a worker role that calls <a class=\"ext-smartDetecor-link\" href=\\\"https://docs.microsoft.com/azure/application-insights/app-insights-api-custom-events-metrics#trackrequest\\\" target=\\\"_blank\\\">TrackRequest()</a> or <a class=\"ext-smartDetecor-link\" href=\\\"https://docs.microsoft.com/azure/application-insights/app-insights-api-custom-events-metrics#trackdependency\\\" target=\\\"_blank\\\">TrackDependency()</a>.<br/><br/><a class=\"ext-smartDetecor-link\" href=\\\"https://docs.microsoft.com/azure/azure-monitor/app/proactive-failure-diagnostics\\\" target=\\\"_blank\\\">Learn more about Failure Anomalies</a>",
+                    "supportedResourceTypes": [
+                        "ApplicationInsights"
+                    ]
+                },
+                "scope": [
+                    "/subscriptions/<<subscription id>>/resourcegroups/rg-a3e-dev/providers/microsoft.insights/components/ai-a3e-task-orchestrator-dev"
+                ],
+                "actionGroups": {
+                    "groupIds": [
+                        "[resourceId('microsoft.insights/actionGroups', 'Application Insights Smart Detection')]"
+                    ]
+                }
+            }
+        },
+        {
+            "type": "Microsoft.BotService/botServices/channels",
+            "apiVersion": "2018-07-12",
+            "name": "a3e-bot-dev/DirectLineChannel",
+            "location": "global",
+            "dependsOn": [
+                "[resourceId('Microsoft.BotService/botServices', 'a3e-bot-dev')]"
+            ],
+            "properties": {
+                "properties": {
+                    "sites": [
+                        {
+                            "siteName": "Default Site",
+                            "isEnabled": true,
+                            "isV1Enabled": true,
+                            "isV3Enabled": true,
+                            "isSecureSiteEnabled": false
+                        }
+                    ]
+                },
+                "channelName": "DirectLineChannel"
+            }
+        },
+        {
+            "type": "Microsoft.BotService/botServices/channels",
+            "apiVersion": "2018-07-12",
+            "name": "a3e-bot-dev/WebChatChannel",
+            "location": "global",
+            "dependsOn": [
+                "[resourceId('Microsoft.BotService/botServices', 'a3e-bot-dev')]"
+            ],
+            "properties": {
+                "properties": {
+                    "sites": [
+                        {
+                            "siteName": "Default Site",
+                            "isEnabled": true,
+                            "enablePreview": null
+                        }
+                    ]
+                },
+                "channelName": "WebChatChannel"
+            }
+        },
+        {
+            "type": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+            "apiVersion": "2020-04-01",
+            "name": "cosmos-a3e/a3e-dev",
+            "dependsOn": [
+                "[resourceId('Microsoft.DocumentDB/databaseAccounts', 'cosmos-a3e')]"
+            ],
+            "properties": {
+                "resource": {
+                    "id": "a3e-dev"
+                },
+                "options": {}
+            }
+        },
+        {
+            "type": "Microsoft.Logic/workflows",
+            "apiVersion": "2017-07-01",
+            "name": "la-cleanupcontainers-dev",
+            "location": "westus",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/connections', 'aci')]"
+            ],
+            "properties": {
+                "state": "Enabled",
+                "definition": {
+                    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "$connections": {
+                            "defaultValue": {},
+                            "type": "Object"
+                        }
+                    },
+                    "triggers": {
+                        "Recurrence": {
+                            "recurrence": {
+                                "frequency": "Day",
+                                "interval": 1,
+                                "startTime": "2020-05-31T23:00:00Z",
+                                "timeZone": "India Standard Time"
+                            },
+                            "type": "Recurrence"
+                        }
+                    },
+                    "actions": {
+                        "For_each_2": {
+                            "foreach": "@variables('ContainerGroupsToDelete')",
+                            "actions": {
+                                "Delete_a_container_group": {
+                                    "runAfter": {
+                                        "Parse_JSON": [
+                                            "Succeeded"
+                                        ]
+                                    },
+                                    "type": "ApiConnection",
+                                    "inputs": {
+                                        "host": {
+                                            "connection": {
+                                                "name": "@parameters('$connections')['aci']['connectionId']"
+                                            }
+                                        },
+                                        "method": "delete",
+                                        "path": "/subscriptions/@{encodeURIComponent('<<subscription id>>')}/resourceGroups/@{encodeURIComponent('rg-a3e-dev')}/providers/Microsoft.ContainerInstance/containerGroups/@{encodeURIComponent(body('Parse_JSON')?['name'])}",
+                                        "queries": {
+                                            "x-ms-api-version": "2019-12-01"
+                                        }
+                                    }
+                                },
+                                "Parse_JSON": {
+                                    "runAfter": {},
+                                    "type": "ParseJson",
+                                    "inputs": {
+                                        "content": "@items('For_each_2')",
+                                        "schema": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string"
+                                                },
+                                                "identity": {
+                                                    "properties": {
+                                                        "tenantId": {
+                                                            "type": "string"
+                                                        },
+                                                        "type": {
+                                                            "type": "string"
+                                                        },
+                                                        "userAssignedIdentities": {
+                                                            "properties": {
+                                                                "/subscriptions/<<subscription id>>/resourcegroups/rg-a3e-dev/providers/Microsoft.ManagedIdentity/userAssignedIdentities/task-runner-identity": {
+                                                                    "properties": {
+                                                                        "clientId": {
+                                                                            "type": "string"
+                                                                        },
+                                                                        "principalId": {
+                                                                            "type": "string"
+                                                                        }
+                                                                    },
+                                                                    "type": "object"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "location": {
+                                                    "type": "string"
+                                                },
+                                                "name": {
+                                                    "type": "string"
+                                                },
+                                                "properties": {
+                                                    "properties": {
+                                                        "containers": {
+                                                            "items": {
+                                                                "properties": {
+                                                                    "name": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "properties": {
+                                                                        "properties": {
+                                                                            "command": {
+                                                                                "items": {
+                                                                                    "type": "string"
+                                                                                },
+                                                                                "type": "array"
+                                                                            },
+                                                                            "environmentVariables": {
+                                                                                "items": {
+                                                                                    "properties": {
+                                                                                        "name": {
+                                                                                            "type": "string"
+                                                                                        },
+                                                                                        "value": {
+                                                                                            "type": "string"
+                                                                                        }
+                                                                                    },
+                                                                                    "required": [
+                                                                                        "name",
+                                                                                        "value"
+                                                                                    ],
+                                                                                    "type": "object"
+                                                                                },
+                                                                                "type": "array"
+                                                                            },
+                                                                            "image": {
+                                                                                "type": "string"
+                                                                            },
+                                                                            "ports": {
+                                                                                "type": "array"
+                                                                            },
+                                                                            "resources": {
+                                                                                "properties": {
+                                                                                    "requests": {
+                                                                                        "properties": {
+                                                                                            "cpu": {
+                                                                                                "type": "integer"
+                                                                                            },
+                                                                                            "memoryInGB": {
+                                                                                                "type": "integer"
+                                                                                            }
+                                                                                        },
+                                                                                        "type": "object"
+                                                                                    }
+                                                                                },
+                                                                                "type": "object"
+                                                                            }
+                                                                        },
+                                                                        "type": "object"
+                                                                    }
+                                                                },
+                                                                "required": [
+                                                                    "name",
+                                                                    "properties"
+                                                                ],
+                                                                "type": "object"
+                                                            },
+                                                            "type": "array"
+                                                        },
+                                                        "initContainers": {
+                                                            "type": "array"
+                                                        },
+                                                        "osType": {
+                                                            "type": "string"
+                                                        },
+                                                        "provisioningState": {
+                                                            "type": "string"
+                                                        },
+                                                        "restartPolicy": {
+                                                            "type": "string"
+                                                        },
+                                                        "sku": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "tags": {
+                                                    "properties": {},
+                                                    "type": "object"
+                                                },
+                                                "type": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            },
+                            "runAfter": {
+                                "For_each_container_group_in_container_groups": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "Foreach"
+                        },
+                        "For_each_container_group_in_container_groups": {
+                            "foreach": "@body('Get_a_list_of_container_groups_in_a_resource_group')?['value']",
+                            "actions": {
+                                "Condition_2": {
+                                    "actions": {
+                                        "Append_to_array_variable": {
+                                            "runAfter": {},
+                                            "type": "AppendToArrayVariable",
+                                            "inputs": {
+                                                "name": "ContainerGroupsToDelete",
+                                                "value": "@items('For_each_container_group_in_container_groups')"
+                                            }
+                                        }
+                                    },
+                                    "runAfter": {
+                                        "For_each": [
+                                            "Succeeded"
+                                        ]
+                                    },
+                                    "expression": {
+                                        "and": [
+                                            {
+                                                "equals": [
+                                                    "@variables('ContainerTerminatedCount')",
+                                                    "@length(body('Get_properties_of_a_container_group')['properties']['containers'])"
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    "type": "If"
+                                },
+                                "For_each": {
+                                    "foreach": "@body('Get_properties_of_a_container_group')['properties']['containers']",
+                                    "actions": {
+                                        "Condition": {
+                                            "actions": {
+                                                "Increment_variable": {
+                                                    "runAfter": {},
+                                                    "type": "IncrementVariable",
+                                                    "inputs": {
+                                                        "name": "ContainerTerminatedCount",
+                                                        "value": 1
+                                                    }
+                                                }
+                                            },
+                                            "runAfter": {},
+                                            "expression": {
+                                                "and": [
+                                                    {
+                                                        "equals": [
+                                                            "@items('For_each')?['properties']?['instanceView']?['currentState']?['state']",
+                                                            "Terminated"
+                                                        ]
+                                                    },
+                                                    {
+                                                        "lessOrEquals": [
+                                                            "@items('For_each')?['properties']?['instanceView']?['currentState']?['finishTime']",
+                                                            "@addDays(utcNow(), -1)"
+                                                        ]
+                                                    }
+                                                ]
+                                            },
+                                            "type": "If"
+                                        }
+                                    },
+                                    "runAfter": {
+                                        "Get_properties_of_a_container_group": [
+                                            "Succeeded"
+                                        ]
+                                    },
+                                    "type": "Foreach",
+                                    "runtimeConfiguration": {
+                                        "concurrency": {
+                                            "repetitions": 1
+                                        }
+                                    }
+                                },
+                                "Get_properties_of_a_container_group": {
+                                    "runAfter": {},
+                                    "type": "ApiConnection",
+                                    "inputs": {
+                                        "host": {
+                                            "connection": {
+                                                "name": "@parameters('$connections')['aci']['connectionId']"
+                                            }
+                                        },
+                                        "method": "get",
+                                        "path": "/subscriptions/@{encodeURIComponent('<<subscription id>>')}/resourceGroups/@{encodeURIComponent('rg-a3e-dev')}/providers/Microsoft.ContainerInstance/containerGroups/@{encodeURIComponent(items('For_each_container_group_in_container_groups')?['name'])}",
+                                        "queries": {
+                                            "x-ms-api-version": "2019-12-01"
+                                        }
+                                    }
+                                },
+                                "Set_variable": {
+                                    "runAfter": {
+                                        "Condition_2": [
+                                            "Succeeded"
+                                        ]
+                                    },
+                                    "type": "SetVariable",
+                                    "inputs": {
+                                        "name": "ContainerTerminatedCount",
+                                        "value": 0
+                                    }
+                                }
+                            },
+                            "runAfter": {
+                                "Get_a_list_of_container_groups_in_a_resource_group": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "Foreach",
+                            "runtimeConfiguration": {
+                                "concurrency": {
+                                    "repetitions": 1
+                                }
+                            }
+                        },
+                        "Get_a_list_of_container_groups_in_a_resource_group": {
+                            "runAfter": {
+                                "Initialize_variable_2": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "ApiConnection",
+                            "inputs": {
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['aci']['connectionId']"
+                                    }
+                                },
+                                "method": "get",
+                                "path": "/subscriptions/@{encodeURIComponent('<<subscription id>>')}/resourceGroups/@{encodeURIComponent('rg-a3e-dev')}/providers/Microsoft.ContainerInstance/containerGroups",
+                                "queries": {
+                                    "x-ms-api-version": "2019-12-01"
+                                }
+                            }
+                        },
+                        "Initialize_variable": {
+                            "runAfter": {},
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "ContainerTerminatedCount",
+                                        "type": "integer",
+                                        "value": 0
+                                    }
+                                ]
+                            }
+                        },
+                        "Initialize_variable_2": {
+                            "runAfter": {
+                                "Initialize_variable": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "ContainerGroupsToDelete",
+                                        "type": "array"
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "outputs": {}
+                },
+                "parameters": {
+                    "$connections": {
+                        "value": {
+                            "aci": {
+                                "connectionId": "[resourceId('Microsoft.Web/connections', 'aci')]",
+                                "connectionName": "aci",
+                                "id": "/subscriptions/<<subscription id>>/providers/Microsoft.Web/locations/westus/managedApis/aci"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+            "apiVersion": "2020-03-01-preview",
+            "name": "law-a3e/LogManagement(law-a3e)_General|AlphabeticallySortedComputers",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', 'law-a3e')]"
+            ],
+            "properties": {
+                "displayName": "All Computers with their most recent data",
+                "category": "General Exploration",
+                "query": "search not(ObjectName == \"Advisor Metrics\" or ObjectName == \"ManagedSpace\") | summarize AggregatedValue = max(TimeGenerated) by Computer | limit 500000 | sort by Computer asc\r\n// Oql: NOT(ObjectName=\"Advisor Metrics\" OR ObjectName=ManagedSpace) | measure max(TimeGenerated) by Computer | top 500000 | Sort Computer // Args: {OQ: True; WorkspaceId: 00000000-0000-0000-0000-000000000000} // Settings: {PTT: True; SortI: True; SortF: True} // Version: 0.1.122",
+                "version": 2
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+            "apiVersion": "2020-03-01-preview",
+            "name": "law-a3e/LogManagement(law-a3e)_General|dataPointsPerManagementGroup",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', 'law-a3e')]"
+            ],
+            "properties": {
+                "displayName": "Which Management Group is generating the most data points?",
+                "category": "General Exploration",
+                "query": "search * | summarize AggregatedValue = count() by ManagementGroupName\r\n// Oql: * | Measure count() by ManagementGroupName // Args: {OQ: True; WorkspaceId: 00000000-0000-0000-0000-000000000000} // Settings: {PTT: True; SortI: True; SortF: True} // Version: 0.1.122",
+                "version": 2
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+            "apiVersion": "2020-03-01-preview",
+            "name": "law-a3e/LogManagement(law-a3e)_General|dataTypeDistribution",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', 'law-a3e')]"
+            ],
+            "properties": {
+                "displayName": "Distribution of data Types",
+                "category": "General Exploration",
+                "query": "search * | extend Type = $table | summarize AggregatedValue = count() by Type\r\n// Oql: * | Measure count() by Type // Args: {OQ: True; WorkspaceId: 00000000-0000-0000-0000-000000000000} // Settings: {PTT: True; SortI: True; SortF: True} // Version: 0.1.122",
+                "version": 2
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+            "apiVersion": "2020-03-01-preview",
+            "name": "law-a3e/LogManagement(law-a3e)_General|StaleComputers",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', 'law-a3e')]"
+            ],
+            "properties": {
+                "displayName": "Stale Computers (data older than 24 hours)",
+                "category": "General Exploration",
+                "query": "search not(ObjectName == \"Advisor Metrics\" or ObjectName == \"ManagedSpace\") | summarize lastdata = max(TimeGenerated) by Computer | limit 500000 | where lastdata < ago(24h)\r\n// Oql: NOT(ObjectName=\"Advisor Metrics\" OR ObjectName=ManagedSpace) | measure max(TimeGenerated) as lastdata by Computer | top 500000 | where lastdata < NOW-24HOURS // Args: {OQ: True; WorkspaceId: 00000000-0000-0000-0000-000000000000} // Settings: {PTT: True; SortI: True; SortF: True} // Version: 0.1.122",
+                "version": 2
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+            "apiVersion": "2020-03-01-preview",
+            "name": "law-a3e/LogManagement(law-a3e)_LogManagement|AllEvents",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', 'law-a3e')]"
+            ],
+            "properties": {
+                "displayName": "All Events",
+                "category": "Log Management",
+                "query": "Event | sort by TimeGenerated desc\r\n// Oql: Type=Event // Args: {OQ: True; WorkspaceId: 00000000-0000-0000-0000-000000000000} // Settings: {PTT: True; SortI: True; SortF: True} // Version: 0.1.122",
+                "version": 2
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+            "apiVersion": "2020-03-01-preview",
+            "name": "law-a3e/LogManagement(law-a3e)_LogManagement|AllSyslog",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', 'law-a3e')]"
+            ],
+            "properties": {
+                "displayName": "All Syslogs",
+                "category": "Log Management",
+                "query": "Syslog | sort by TimeGenerated desc\r\n// Oql: Type=Syslog // Args: {OQ: True; WorkspaceId: 00000000-0000-0000-0000-000000000000} // Settings: {PTT: True; SortI: True; SortF: True} // Version: 0.1.122",
+                "version": 2
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+            "apiVersion": "2020-03-01-preview",
+            "name": "law-a3e/LogManagement(law-a3e)_LogManagement|AllSyslogByFacility",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', 'law-a3e')]"
+            ],
+            "properties": {
+                "displayName": "All Syslog Records grouped by Facility",
+                "category": "Log Management",
+                "query": "Syslog | summarize AggregatedValue = count() by Facility\r\n// Oql: Type=Syslog | Measure count() by Facility // Args: {OQ: True; WorkspaceId: 00000000-0000-0000-0000-000000000000} // Settings: {PTT: True; SortI: True; SortF: True} // Version: 0.1.122",
+                "version": 2
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+            "apiVersion": "2020-03-01-preview",
+            "name": "law-a3e/LogManagement(law-a3e)_LogManagement|AllSyslogByProcessName",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', 'law-a3e')]"
+            ],
+            "properties": {
+                "displayName": "All Syslog Records grouped by ProcessName",
+                "category": "Log Management",
+                "query": "Syslog | summarize AggregatedValue = count() by ProcessName\r\n// Oql: Type=Syslog | Measure count() by ProcessName // Args: {OQ: True; WorkspaceId: 00000000-0000-0000-0000-000000000000} // Settings: {PTT: True; SortI: True; SortF: True} // Version: 0.1.122",
+                "version": 2
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+            "apiVersion": "2020-03-01-preview",
+            "name": "law-a3e/LogManagement(law-a3e)_LogManagement|AllSyslogsWithErrors",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', 'law-a3e')]"
+            ],
+            "properties": {
+                "displayName": "All Syslog Records with Errors",
+                "category": "Log Management",
+                "query": "Syslog | where SeverityLevel == \"error\" | sort by TimeGenerated desc\r\n// Oql: Type=Syslog SeverityLevel=error // Args: {OQ: True; WorkspaceId: 00000000-0000-0000-0000-000000000000} // Settings: {PTT: True; SortI: True; SortF: True} // Version: 0.1.122",
+                "version": 2
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+            "apiVersion": "2020-03-01-preview",
+            "name": "law-a3e/LogManagement(law-a3e)_LogManagement|AverageHTTPRequestTimeByClientIPAddress",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', 'law-a3e')]"
+            ],
+            "properties": {
+                "displayName": "Average HTTP Request time by Client IP Address",
+                "category": "Log Management",
+                "query": "search * | extend Type = $table | where Type == W3CIISLog | summarize AggregatedValue = avg(TimeTaken) by cIP\r\n// Oql: Type=W3CIISLog | Measure Avg(TimeTaken) by cIP // Args: {OQ: True; WorkspaceId: 00000000-0000-0000-0000-000000000000} // Settings: {PEF: True; SortI: True; SortF: True} // Version: 0.1.122",
+                "version": 2
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+            "apiVersion": "2020-03-01-preview",
+            "name": "law-a3e/LogManagement(law-a3e)_LogManagement|AverageHTTPRequestTimeHTTPMethod",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', 'law-a3e')]"
+            ],
+            "properties": {
+                "displayName": "Average HTTP Request time by HTTP Method",
+                "category": "Log Management",
+                "query": "search * | extend Type = $table | where Type == W3CIISLog | summarize AggregatedValue = avg(TimeTaken) by csMethod\r\n// Oql: Type=W3CIISLog | Measure Avg(TimeTaken) by csMethod // Args: {OQ: True; WorkspaceId: 00000000-0000-0000-0000-000000000000} // Settings: {PEF: True; SortI: True; SortF: True} // Version: 0.1.122",
+                "version": 2
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+            "apiVersion": "2020-03-01-preview",
+            "name": "law-a3e/LogManagement(law-a3e)_LogManagement|CountIISLogEntriesClientIPAddress",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', 'law-a3e')]"
+            ],
+            "properties": {
+                "displayName": "Count of IIS Log Entries by Client IP Address",
+                "category": "Log Management",
+                "query": "search * | extend Type = $table | where Type == W3CIISLog | summarize AggregatedValue = count() by cIP\r\n// Oql: Type=W3CIISLog | Measure count() by cIP // Args: {OQ: True; WorkspaceId: 00000000-0000-0000-0000-000000000000} // Settings: {PEF: True; SortI: True; SortF: True} // Version: 0.1.122",
+                "version": 2
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+            "apiVersion": "2020-03-01-preview",
+            "name": "law-a3e/LogManagement(law-a3e)_LogManagement|CountIISLogEntriesHTTPRequestMethod",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', 'law-a3e')]"
+            ],
+            "properties": {
+                "displayName": "Count of IIS Log Entries by HTTP Request Method",
+                "category": "Log Management",
+                "query": "search * | extend Type = $table | where Type == W3CIISLog | summarize AggregatedValue = count() by csMethod\r\n// Oql: Type=W3CIISLog | Measure count() by csMethod // Args: {OQ: True; WorkspaceId: 00000000-0000-0000-0000-000000000000} // Settings: {PEF: True; SortI: True; SortF: True} // Version: 0.1.122",
+                "version": 2
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+            "apiVersion": "2020-03-01-preview",
+            "name": "law-a3e/LogManagement(law-a3e)_LogManagement|CountIISLogEntriesHTTPUserAgent",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', 'law-a3e')]"
+            ],
+            "properties": {
+                "displayName": "Count of IIS Log Entries by HTTP User Agent",
+                "category": "Log Management",
+                "query": "search * | extend Type = $table | where Type == W3CIISLog | summarize AggregatedValue = count() by csUserAgent\r\n// Oql: Type=W3CIISLog | Measure count() by csUserAgent // Args: {OQ: True; WorkspaceId: 00000000-0000-0000-0000-000000000000} // Settings: {PEF: True; SortI: True; SortF: True} // Version: 0.1.122",
+                "version": 2
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+            "apiVersion": "2020-03-01-preview",
+            "name": "law-a3e/LogManagement(law-a3e)_LogManagement|CountOfIISLogEntriesByHostRequestedByClient",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', 'law-a3e')]"
+            ],
+            "properties": {
+                "displayName": "Count of IIS Log Entries by Host requested by client",
+                "category": "Log Management",
+                "query": "search * | extend Type = $table | where Type == W3CIISLog | summarize AggregatedValue = count() by csHost\r\n// Oql: Type=W3CIISLog | Measure count() by csHost // Args: {OQ: True; WorkspaceId: 00000000-0000-0000-0000-000000000000} // Settings: {PEF: True; SortI: True; SortF: True} // Version: 0.1.122",
+                "version": 2
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+            "apiVersion": "2020-03-01-preview",
+            "name": "law-a3e/LogManagement(law-a3e)_LogManagement|CountOfIISLogEntriesByURLForHost",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', 'law-a3e')]"
+            ],
+            "properties": {
+                "displayName": "Count of IIS Log Entries by URL for the host \"www.contoso.com\" (replace with your own)",
+                "category": "Log Management",
+                "query": "search csHost == \"www.contoso.com\" | extend Type = $table | where Type == W3CIISLog | summarize AggregatedValue = count() by csUriStem\r\n// Oql: Type=W3CIISLog csHost=\"www.contoso.com\" | Measure count() by csUriStem // Args: {OQ: True; WorkspaceId: 00000000-0000-0000-0000-000000000000} // Settings: {PEF: True; SortI: True; SortF: True} // Version: 0.1.122",
+                "version": 2
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+            "apiVersion": "2020-03-01-preview",
+            "name": "law-a3e/LogManagement(law-a3e)_LogManagement|CountOfIISLogEntriesByURLRequestedByClient",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', 'law-a3e')]"
+            ],
+            "properties": {
+                "displayName": "Count of IIS Log Entries by URL requested by client (without query strings)",
+                "category": "Log Management",
+                "query": "search * | extend Type = $table | where Type == W3CIISLog | summarize AggregatedValue = count() by csUriStem\r\n// Oql: Type=W3CIISLog | Measure count() by csUriStem // Args: {OQ: True; WorkspaceId: 00000000-0000-0000-0000-000000000000} // Settings: {PEF: True; SortI: True; SortF: True} // Version: 0.1.122",
+                "version": 2
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+            "apiVersion": "2020-03-01-preview",
+            "name": "law-a3e/LogManagement(law-a3e)_LogManagement|CountOfWarningEvents",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', 'law-a3e')]"
+            ],
+            "properties": {
+                "displayName": "Count of Events with level \"Warning\" grouped by Event ID",
+                "category": "Log Management",
+                "query": "Event | where EventLevelName == \"warning\" | summarize AggregatedValue = count() by EventID\r\n// Oql: Type=Event EventLevelName=warning | Measure count() by EventID // Args: {OQ: True; WorkspaceId: 00000000-0000-0000-0000-000000000000} // Settings: {PTT: True; SortI: True; SortF: True} // Version: 0.1.122",
+                "version": 2
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+            "apiVersion": "2020-03-01-preview",
+            "name": "law-a3e/LogManagement(law-a3e)_LogManagement|DisplayBreakdownRespondCodes",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', 'law-a3e')]"
+            ],
+            "properties": {
+                "displayName": "Shows breakdown of response codes",
+                "category": "Log Management",
+                "query": "search * | extend Type = $table | where Type == W3CIISLog | summarize AggregatedValue = count() by scStatus\r\n// Oql: Type=W3CIISLog | Measure count() by scStatus // Args: {OQ: True; WorkspaceId: 00000000-0000-0000-0000-000000000000} // Settings: {PEF: True; SortI: True; SortF: True} // Version: 0.1.122",
+                "version": 2
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+            "apiVersion": "2020-03-01-preview",
+            "name": "law-a3e/LogManagement(law-a3e)_LogManagement|EventsByEventLog",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', 'law-a3e')]"
+            ],
+            "properties": {
+                "displayName": "Count of Events grouped by Event Log",
+                "category": "Log Management",
+                "query": "Event | summarize AggregatedValue = count() by EventLog\r\n// Oql: Type=Event | Measure count() by EventLog // Args: {OQ: True; WorkspaceId: 00000000-0000-0000-0000-000000000000} // Settings: {PTT: True; SortI: True; SortF: True} // Version: 0.1.122",
+                "version": 2
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+            "apiVersion": "2020-03-01-preview",
+            "name": "law-a3e/LogManagement(law-a3e)_LogManagement|EventsByEventsID",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', 'law-a3e')]"
+            ],
+            "properties": {
+                "displayName": "Count of Events grouped by Event ID",
+                "category": "Log Management",
+                "query": "Event | summarize AggregatedValue = count() by EventID\r\n// Oql: Type=Event | Measure count() by EventID // Args: {OQ: True; WorkspaceId: 00000000-0000-0000-0000-000000000000} // Settings: {PTT: True; SortI: True; SortF: True} // Version: 0.1.122",
+                "version": 2
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+            "apiVersion": "2020-03-01-preview",
+            "name": "law-a3e/LogManagement(law-a3e)_LogManagement|EventsByEventSource",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', 'law-a3e')]"
+            ],
+            "properties": {
+                "displayName": "Count of Events grouped by Event Source",
+                "category": "Log Management",
+                "query": "Event | summarize AggregatedValue = count() by Source\r\n// Oql: Type=Event | Measure count() by Source // Args: {OQ: True; WorkspaceId: 00000000-0000-0000-0000-000000000000} // Settings: {PTT: True; SortI: True; SortF: True} // Version: 0.1.122",
+                "version": 2
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+            "apiVersion": "2020-03-01-preview",
+            "name": "law-a3e/LogManagement(law-a3e)_LogManagement|EventsInOMBetween2000to3000",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', 'law-a3e')]"
+            ],
+            "properties": {
+                "displayName": "Events in the Operations Manager Event Log whose Event ID is in the range between 2000 and 3000",
+                "category": "Log Management",
+                "query": "Event | where EventLog == \"Operations Manager\" and EventID >= 2000 and EventID <= 3000 | sort by TimeGenerated desc\r\n// Oql: Type=Event EventLog=\"Operations Manager\" EventID:[2000..3000] // Args: {OQ: True; WorkspaceId: 00000000-0000-0000-0000-000000000000} // Settings: {PTT: True; SortI: True; SortF: True} // Version: 0.1.122",
+                "version": 2
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+            "apiVersion": "2020-03-01-preview",
+            "name": "law-a3e/LogManagement(law-a3e)_LogManagement|EventsWithStartedinEventID",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', 'law-a3e')]"
+            ],
+            "properties": {
+                "displayName": "Count of Events containing the word \"started\" grouped by EventID",
+                "category": "Log Management",
+                "query": "search in (Event) \"started\" | summarize AggregatedValue = count() by EventID\r\n// Oql: Type=Event \"started\" | Measure count() by EventID // Args: {OQ: True; WorkspaceId: 00000000-0000-0000-0000-000000000000} // Settings: {PTT: True; SortI: True; SortF: True} // Version: 0.1.122",
+                "version": 2
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+            "apiVersion": "2020-03-01-preview",
+            "name": "law-a3e/LogManagement(law-a3e)_LogManagement|FindMaximumTimeTakenForEachPage",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', 'law-a3e')]"
+            ],
+            "properties": {
+                "displayName": "Find the maximum time taken for each page",
+                "category": "Log Management",
+                "query": "search * | extend Type = $table | where Type == W3CIISLog | summarize AggregatedValue = max(TimeTaken) by csUriStem\r\n// Oql: Type=W3CIISLog | Measure Max(TimeTaken) by csUriStem // Args: {OQ: True; WorkspaceId: 00000000-0000-0000-0000-000000000000} // Settings: {PEF: True; SortI: True; SortF: True} // Version: 0.1.122",
+                "version": 2
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+            "apiVersion": "2020-03-01-preview",
+            "name": "law-a3e/LogManagement(law-a3e)_LogManagement|IISLogEntriesForClientIP",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', 'law-a3e')]"
+            ],
+            "properties": {
+                "displayName": "IIS Log Entries for a specific client IP Address (replace with your own)",
+                "category": "Log Management",
+                "query": "search cIP == \"192.168.0.1\" | extend Type = $table | where Type == W3CIISLog | sort by TimeGenerated desc | project csUriStem, scBytes, csBytes, TimeTaken, scStatus\r\n// Oql: Type=W3CIISLog cIP=\"192.168.0.1\" | Select csUriStem,scBytes,csBytes,TimeTaken,scStatus // Args: {OQ: True; WorkspaceId: 00000000-0000-0000-0000-000000000000} // Settings: {PEF: True; SortI: True; SortF: True} // Version: 0.1.122",
+                "version": 2
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+            "apiVersion": "2020-03-01-preview",
+            "name": "law-a3e/LogManagement(law-a3e)_LogManagement|ListAllIISLogEntries",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', 'law-a3e')]"
+            ],
+            "properties": {
+                "displayName": "All IIS Log Entries",
+                "category": "Log Management",
+                "query": "search * | extend Type = $table | where Type == W3CIISLog | sort by TimeGenerated desc\r\n// Oql: Type=W3CIISLog // Args: {OQ: True; WorkspaceId: 00000000-0000-0000-0000-000000000000} // Settings: {PEF: True; SortI: True; SortF: True} // Version: 0.1.122",
+                "version": 2
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+            "apiVersion": "2020-03-01-preview",
+            "name": "law-a3e/LogManagement(law-a3e)_LogManagement|NoOfConnectionsToOMSDKService",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', 'law-a3e')]"
+            ],
+            "properties": {
+                "displayName": "How many connections to Operations Manager's SDK service by day",
+                "category": "Log Management",
+                "query": "Event | where EventID == 26328 and EventLog == \"Operations Manager\" | summarize AggregatedValue = count() by bin(TimeGenerated, 1d) | sort by TimeGenerated desc\r\n// Oql: Type=Event EventID=26328 EventLog=\"Operations Manager\" | Measure count() interval 1DAY // Args: {OQ: True; WorkspaceId: 00000000-0000-0000-0000-000000000000} // Settings: {PTT: True; SortI: True; SortF: True} // Version: 0.1.122",
+                "version": 2
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+            "apiVersion": "2020-03-01-preview",
+            "name": "law-a3e/LogManagement(law-a3e)_LogManagement|ServerRestartTime",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', 'law-a3e')]"
+            ],
+            "properties": {
+                "displayName": "When did my servers initiate restart?",
+                "category": "Log Management",
+                "query": "search in (Event) \"shutdown\" and EventLog == \"System\" and Source == \"User32\" and EventID == 1074 | sort by TimeGenerated desc | project TimeGenerated, Computer\r\n// Oql: shutdown Type=Event EventLog=System Source=User32 EventID=1074 | Select TimeGenerated,Computer // Args: {OQ: True; WorkspaceId: 00000000-0000-0000-0000-000000000000} // Settings: {PTT: True; SortI: True; SortF: True} // Version: 0.1.122",
+                "version": 2
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+            "apiVersion": "2020-03-01-preview",
+            "name": "law-a3e/LogManagement(law-a3e)_LogManagement|Show404PagesList",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', 'law-a3e')]"
+            ],
+            "properties": {
+                "displayName": "Shows which pages people are getting a 404 for",
+                "category": "Log Management",
+                "query": "search scStatus == 404 | extend Type = $table | where Type == W3CIISLog | summarize AggregatedValue = count() by csUriStem\r\n// Oql: Type=W3CIISLog scStatus=404 | Measure count() by csUriStem // Args: {OQ: True; WorkspaceId: 00000000-0000-0000-0000-000000000000} // Settings: {PEF: True; SortI: True; SortF: True} // Version: 0.1.122",
+                "version": 2
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+            "apiVersion": "2020-03-01-preview",
+            "name": "law-a3e/LogManagement(law-a3e)_LogManagement|ShowServersThrowingInternalServerError",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', 'law-a3e')]"
+            ],
+            "properties": {
+                "displayName": "Shows servers that are throwing internal server error",
+                "category": "Log Management",
+                "query": "search scStatus == 500 | extend Type = $table | where Type == W3CIISLog | summarize AggregatedValue = count() by sComputerName\r\n// Oql: Type=W3CIISLog scStatus=500 | Measure count() by sComputerName // Args: {OQ: True; WorkspaceId: 00000000-0000-0000-0000-000000000000} // Settings: {PEF: True; SortI: True; SortF: True} // Version: 0.1.122",
+                "version": 2
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+            "apiVersion": "2020-03-01-preview",
+            "name": "law-a3e/LogManagement(law-a3e)_LogManagement|TotalBytesReceivedByEachAzureRoleInstance",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', 'law-a3e')]"
+            ],
+            "properties": {
+                "displayName": "Total Bytes received by each Azure Role Instance",
+                "category": "Log Management",
+                "query": "search * | extend Type = $table | where Type == W3CIISLog | summarize AggregatedValue = sum(csBytes) by RoleInstance\r\n// Oql: Type=W3CIISLog | Measure Sum(csBytes) by RoleInstance // Args: {OQ: True; WorkspaceId: 00000000-0000-0000-0000-000000000000} // Settings: {PEF: True; SortI: True; SortF: True} // Version: 0.1.122",
+                "version": 2
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+            "apiVersion": "2020-03-01-preview",
+            "name": "law-a3e/LogManagement(law-a3e)_LogManagement|TotalBytesReceivedByEachIISComputer",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', 'law-a3e')]"
+            ],
+            "properties": {
+                "displayName": "Total Bytes received by each IIS Computer",
+                "category": "Log Management",
+                "query": "search * | extend Type = $table | where Type == W3CIISLog | summarize AggregatedValue = sum(csBytes) by Computer | limit 500000\r\n// Oql: Type=W3CIISLog | Measure Sum(csBytes) by Computer | top 500000 // Args: {OQ: True; WorkspaceId: 00000000-0000-0000-0000-000000000000} // Settings: {PEF: True; SortI: True; SortF: True} // Version: 0.1.122",
+                "version": 2
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+            "apiVersion": "2020-03-01-preview",
+            "name": "law-a3e/LogManagement(law-a3e)_LogManagement|TotalBytesRespondedToClientsByClientIPAddress",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', 'law-a3e')]"
+            ],
+            "properties": {
+                "displayName": "Total Bytes responded back to clients by Client IP Address",
+                "category": "Log Management",
+                "query": "search * | extend Type = $table | where Type == W3CIISLog | summarize AggregatedValue = sum(scBytes) by cIP\r\n// Oql: Type=W3CIISLog | Measure Sum(scBytes) by cIP // Args: {OQ: True; WorkspaceId: 00000000-0000-0000-0000-000000000000} // Settings: {PEF: True; SortI: True; SortF: True} // Version: 0.1.122",
+                "version": 2
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+            "apiVersion": "2020-03-01-preview",
+            "name": "law-a3e/LogManagement(law-a3e)_LogManagement|TotalBytesRespondedToClientsByEachIISServerIPAddress",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', 'law-a3e')]"
+            ],
+            "properties": {
+                "displayName": "Total Bytes responded back to clients by each IIS ServerIP Address",
+                "category": "Log Management",
+                "query": "search * | extend Type = $table | where Type == W3CIISLog | summarize AggregatedValue = sum(scBytes) by sIP\r\n// Oql: Type=W3CIISLog | Measure Sum(scBytes) by sIP // Args: {OQ: True; WorkspaceId: 00000000-0000-0000-0000-000000000000} // Settings: {PEF: True; SortI: True; SortF: True} // Version: 0.1.122",
+                "version": 2
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+            "apiVersion": "2020-03-01-preview",
+            "name": "law-a3e/LogManagement(law-a3e)_LogManagement|TotalBytesSentByClientIPAddress",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', 'law-a3e')]"
+            ],
+            "properties": {
+                "displayName": "Total Bytes sent by Client IP Address",
+                "category": "Log Management",
+                "query": "search * | extend Type = $table | where Type == W3CIISLog | summarize AggregatedValue = sum(csBytes) by cIP\r\n// Oql: Type=W3CIISLog | Measure Sum(csBytes) by cIP // Args: {OQ: True; WorkspaceId: 00000000-0000-0000-0000-000000000000} // Settings: {PEF: True; SortI: True; SortF: True} // Version: 0.1.122",
+                "version": 2
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+            "apiVersion": "2020-03-01-preview",
+            "name": "law-a3e/LogManagement(law-a3e)_LogManagement|WarningEvents",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', 'law-a3e')]"
+            ],
+            "properties": {
+                "displayName": "All Events with level \"Warning\"",
+                "category": "Log Management",
+                "query": "Event | where EventLevelName == \"warning\" | sort by TimeGenerated desc\r\n// Oql: Type=Event EventLevelName=warning // Args: {OQ: True; WorkspaceId: 00000000-0000-0000-0000-000000000000} // Settings: {PTT: True; SortI: True; SortF: True} // Version: 0.1.122",
+                "version": 2
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+            "apiVersion": "2020-03-01-preview",
+            "name": "law-a3e/LogManagement(law-a3e)_LogManagement|WindowsFireawallPolicySettingsChanged",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', 'law-a3e')]"
+            ],
+            "properties": {
+                "displayName": "Windows Firewall Policy settings have changed",
+                "category": "Log Management",
+                "query": "Event | where EventLog == \"Microsoft-Windows-Windows Firewall With Advanced Security/Firewall\" and EventID == 2008 | sort by TimeGenerated desc\r\n// Oql: Type=Event EventLog=\"Microsoft-Windows-Windows Firewall With Advanced Security/Firewall\" EventID=2008 // Args: {OQ: True; WorkspaceId: 00000000-0000-0000-0000-000000000000} // Settings: {PTT: True; SortI: True; SortF: True} // Version: 0.1.122",
+                "version": 2
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+            "apiVersion": "2020-03-01-preview",
+            "name": "law-a3e/LogManagement(law-a3e)_LogManagement|WindowsFireawallPolicySettingsChangedByMachines",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', 'law-a3e')]"
+            ],
+            "properties": {
+                "displayName": "On which machines and how many times have Windows Firewall Policy settings changed",
+                "category": "Log Management",
+                "query": "Event | where EventLog == \"Microsoft-Windows-Windows Firewall With Advanced Security/Firewall\" and EventID == 2008 | summarize AggregatedValue = count() by Computer | limit 500000\r\n// Oql: Type=Event EventLog=\"Microsoft-Windows-Windows Firewall With Advanced Security/Firewall\" EventID=2008 | measure count() by Computer | top 500000 // Args: {OQ: True; WorkspaceId: 00000000-0000-0000-0000-000000000000} // Settings: {PTT: True; SortI: True; SortF: True} // Version: 0.1.122",
+                "version": 2
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/blobServices",
+            "apiVersion": "2019-06-01",
+            "name": "saa3edev/default",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', 'saa3edev')]"
+            ],
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "properties": {
+                "cors": {
+                    "corsRules": []
+                },
+                "deleteRetentionPolicy": {
+                    "enabled": false
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/fileServices",
+            "apiVersion": "2019-06-01",
+            "name": "saa3edev/default",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', 'saa3edev')]"
+            ],
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "properties": {
+                "cors": {
+                    "corsRules": []
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2018-11-01",
+            "name": "a3e-bot-dev",
+            "location": "West US",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', 'asp-a3e-bot-dev')]"
+            ],
+            "kind": "app",
+            "properties": {
+                "enabled": true,
+                "hostNameSslStates": [
+                    {
+                        "name": "a3e-bot-dev.azurewebsites.net",
+                        "sslState": "Disabled",
+                        "hostType": "Standard"
+                    },
+                    {
+                        "name": "a3e-bot-dev.scm.azurewebsites.net",
+                        "sslState": "Disabled",
+                        "hostType": "Repository"
+                    }
+                ],
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', 'asp-a3e-bot-dev')]",
+                "reserved": false,
+                "isXenon": false,
+                "hyperV": false,
+                "siteConfig": {},
+                "scmSiteAlsoStopped": false,
+                "clientAffinityEnabled": true,
+                "clientCertEnabled": false,
+                "hostNamesDisabled": false,
+                "containerSize": 0,
+                "dailyMemoryTimeQuota": 0,
+                "httpsOnly": false,
+                "redundancyMode": "None"
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2018-11-01",
+            "name": "fa-a3e-task-orchestrator-dev",
+            "location": "West US",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', 'ASP-rga3edev-8229')]"
+            ],
+            "kind": "functionapp",
+            "identity": {
+                "principalId": "86220e76-d443-46c5-935e-280b3cf9ad2f",
+                "tenantId": "df932d0b-4b58-4d6b-8b9e-ec133334ca4e",
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "enabled": true,
+                "hostNameSslStates": [
+                    {
+                        "name": "fa-a3e-task-orchestrator-dev.azurewebsites.net",
+                        "sslState": "Disabled",
+                        "hostType": "Standard"
+                    },
+                    {
+                        "name": "fa-a3e-task-orchestrator-dev.scm.azurewebsites.net",
+                        "sslState": "Disabled",
+                        "hostType": "Repository"
+                    }
+                ],
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', 'ASP-rga3edev-8229')]",
+                "reserved": false,
+                "isXenon": false,
+                "hyperV": false,
+                "siteConfig": {},
+                "scmSiteAlsoStopped": false,
+                "clientAffinityEnabled": true,
+                "clientCertEnabled": false,
+                "hostNamesDisabled": false,
+                "containerSize": 1536,
+                "dailyMemoryTimeQuota": 0,
+                "httpsOnly": false,
+                "redundancyMode": "None"
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/config",
+            "apiVersion": "2018-11-01",
+            "name": "a3e-bot-dev/web",
+            "location": "West US",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', 'a3e-bot-dev')]"
+            ],
+            "properties": {
+                "numberOfWorkers": 1,
+                "defaultDocuments": [
+                    "Default.htm",
+                    "Default.html",
+                    "Default.asp",
+                    "index.htm",
+                    "index.html",
+                    "iisstart.htm",
+                    "default.aspx",
+                    "index.php",
+                    "hostingstart.html"
+                ],
+                "netFrameworkVersion": "v4.0",
+                "phpVersion": "5.6",
+                "requestTracingEnabled": false,
+                "requestTracingExpirationTime": "2020-06-06T14:45:00Z",
+                "remoteDebuggingEnabled": false,
+                "remoteDebuggingVersion": "VS2019",
+                "httpLoggingEnabled": true,
+                "logsDirectorySizeLimit": 35,
+                "detailedErrorLoggingEnabled": true,
+                "publishingUsername": "$a3e-bot-dev",
+                "scmType": "None",
+                "use32BitWorkerProcess": true,
+                "webSocketsEnabled": true,
+                "alwaysOn": false,
+                "managedPipelineMode": "Integrated",
+                "virtualApplications": [
+                    {
+                        "virtualPath": "/",
+                        "physicalPath": "site\\wwwroot",
+                        "preloadEnabled": false
+                    }
+                ],
+                "loadBalancing": "LeastRequests",
+                "experiments": {
+                    "rampUpRules": []
+                },
+                "autoHealEnabled": false,
+                "cors": {
+                    "allowedOrigins": [
+                        "https://portal.azure.com",
+                        "https://botservice.hosting.portal.azure.net",
+                        "https://botservice-ms.hosting.portal.azure.net",
+                        "https://hosting.onecloud.azure-test.net/"
+                    ],
+                    "supportCredentials": false
+                },
+                "localMySqlEnabled": false,
+                "ipSecurityRestrictions": [
+                    {
+                        "ipAddress": "Any",
+                        "action": "Allow",
+                        "priority": 1,
+                        "name": "Allow all",
+                        "description": "Allow all access"
+                    }
+                ],
+                "scmIpSecurityRestrictions": [
+                    {
+                        "ipAddress": "Any",
+                        "action": "Allow",
+                        "priority": 1,
+                        "name": "Allow all",
+                        "description": "Allow all access"
+                    }
+                ],
+                "scmIpSecurityRestrictionsUseMain": false,
+                "http20Enabled": false,
+                "minTlsVersion": "1.2",
+                "ftpsState": "AllAllowed",
+                "reservedInstanceCount": 0
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/config",
+            "apiVersion": "2018-11-01",
+            "name": "fa-a3e-task-orchestrator-dev/web",
+            "location": "West US",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', 'fa-a3e-task-orchestrator-dev')]"
+            ],
+            "properties": {
+                "numberOfWorkers": -1,
+                "defaultDocuments": [
+                    "Default.htm",
+                    "Default.html",
+                    "Default.asp",
+                    "index.htm",
+                    "index.html",
+                    "iisstart.htm",
+                    "default.aspx",
+                    "index.php"
+                ],
+                "netFrameworkVersion": "v4.0",
+                "phpVersion": "5.6",
+                "requestTracingEnabled": false,
+                "remoteDebuggingEnabled": false,
+                "remoteDebuggingVersion": "VS2019",
+                "httpLoggingEnabled": false,
+                "logsDirectorySizeLimit": 35,
+                "detailedErrorLoggingEnabled": false,
+                "publishingUsername": "$fa-a3e-task-orchestrator-dev",
+                "scmType": "None",
+                "use32BitWorkerProcess": true,
+                "webSocketsEnabled": false,
+                "alwaysOn": false,
+                "managedPipelineMode": "Integrated",
+                "virtualApplications": [
+                    {
+                        "virtualPath": "/",
+                        "physicalPath": "site\\wwwroot",
+                        "preloadEnabled": false
+                    }
+                ],
+                "loadBalancing": "LeastRequests",
+                "experiments": {
+                    "rampUpRules": []
+                },
+                "autoHealEnabled": false,
+                "cors": {
+                    "allowedOrigins": [
+                        "https://functions.azure.com",
+                        "https://functions-staging.azure.com",
+                        "https://functions-next.azure.com"
+                    ],
+                    "supportCredentials": false
+                },
+                "localMySqlEnabled": false,
+                "managedServiceIdentityId": 7243,
+                "ipSecurityRestrictions": [
+                    {
+                        "ipAddress": "Any",
+                        "action": "Allow",
+                        "priority": 1,
+                        "name": "Allow all",
+                        "description": "Allow all access"
+                    }
+                ],
+                "scmIpSecurityRestrictions": [
+                    {
+                        "ipAddress": "Any",
+                        "action": "Allow",
+                        "priority": 1,
+                        "name": "Allow all",
+                        "description": "Allow all access"
+                    }
+                ],
+                "scmIpSecurityRestrictionsUseMain": false,
+                "http20Enabled": false,
+                "minTlsVersion": "1.2",
+                "ftpsState": "AllAllowed",
+                "reservedInstanceCount": 0
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/deployments",
+            "apiVersion": "2018-11-01",
+            "name": "a3e-bot-dev/50c828dc823841b7930651236d7111c8",
+            "location": "West US",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', 'a3e-bot-dev')]"
+            ],
+            "properties": {
+                "status": 4,
+                "author_email": "N/A",
+                "author": "N/A",
+                "deployer": "GITHUB_ZIP_DEPLOY",
+                "message": "Created via a push deployment",
+                "start_time": "2020-06-06T13:31:17.1801087Z",
+                "end_time": "2020-06-06T13:31:23.4704548Z",
+                "active": false
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/deployments",
+            "apiVersion": "2018-11-01",
+            "name": "a3e-bot-dev/813da25d600b49dfa62642b0d3de65c7",
+            "location": "West US",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', 'a3e-bot-dev')]"
+            ],
+            "properties": {
+                "status": 4,
+                "author_email": "N/A",
+                "author": "N/A",
+                "deployer": "GITHUB_ZIP_DEPLOY",
+                "message": "Created via a push deployment",
+                "start_time": "2020-06-06T13:17:28.1183857Z",
+                "end_time": "2020-06-06T13:17:38.3094615Z",
+                "active": false
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/deployments",
+            "apiVersion": "2018-11-01",
+            "name": "a3e-bot-dev/91607e8bfdd7c6e8aaaa27c82ca7a337ddbe9a221591449462701",
+            "location": "West US",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', 'a3e-bot-dev')]"
+            ],
+            "properties": {
+                "status": 4,
+                "author": "lalitadithya",
+                "deployer": "GitHub",
+                "message": "{\"type\":\"Deployment\",\"sha\":\"91607e8bfdd7c6e8aaaa27c82ca7a337ddbe9a22\",\"repoName\":\"lalitadithya/automate-anything-and-everything\",\"slotName\":\"production\"}",
+                "start_time": "2020-06-06T13:17:43.0801617Z",
+                "end_time": "2020-06-06T13:17:43.0801617Z",
+                "active": false
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/deployments",
+            "apiVersion": "2018-11-01",
+            "name": "a3e-bot-dev/91607e8bfdd7c6e8aaaa27c82ca7a337ddbe9a221591450288470",
+            "location": "West US",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', 'a3e-bot-dev')]"
+            ],
+            "properties": {
+                "status": 4,
+                "author": "lalitadithya",
+                "deployer": "GitHub",
+                "message": "{\"type\":\"Deployment\",\"sha\":\"91607e8bfdd7c6e8aaaa27c82ca7a337ddbe9a22\",\"repoName\":\"lalitadithya/automate-anything-and-everything\",\"slotName\":\"production\"}",
+                "start_time": "2020-06-06T13:31:28.8612527Z",
+                "end_time": "2020-06-06T13:31:28.8612527Z",
+                "active": true
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/deployments",
+            "apiVersion": "2018-11-01",
+            "name": "fa-a3e-task-orchestrator-dev/250cfa8b1594499187f03d92bd07ac94",
+            "location": "West US",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', 'fa-a3e-task-orchestrator-dev')]"
+            ],
+            "properties": {
+                "status": 4,
+                "author_email": "N/A",
+                "author": "N/A",
+                "deployer": "Push-Deployer",
+                "message": "Created via a push deployment",
+                "start_time": "2020-06-06T05:53:07.359279Z",
+                "end_time": "2020-06-06T05:53:11.1463275Z",
+                "active": false
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/deployments",
+            "apiVersion": "2018-11-01",
+            "name": "fa-a3e-task-orchestrator-dev/5108989cf7834872b1a69cdaea2e7749",
+            "location": "West US",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', 'fa-a3e-task-orchestrator-dev')]"
+            ],
+            "properties": {
+                "status": 4,
+                "author_email": "N/A",
+                "author": "N/A",
+                "deployer": "GITHUB_ZIP_DEPLOY",
+                "message": "Created via a push deployment",
+                "start_time": "2020-06-06T06:00:26.1883734Z",
+                "end_time": "2020-06-06T06:00:30.8423146Z",
+                "active": false
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/deployments",
+            "apiVersion": "2018-11-01",
+            "name": "fa-a3e-task-orchestrator-dev/53ba04aa0640de685908bf3640d9eb8f6de0c5bb1591423236498",
+            "location": "West US",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', 'fa-a3e-task-orchestrator-dev')]"
+            ],
+            "properties": {
+                "status": 4,
+                "author": "lalitadithya",
+                "deployer": "GitHub",
+                "message": "{\"type\":\"Deployment\",\"sha\":\"53ba04aa0640de685908bf3640d9eb8f6de0c5bb\",\"repoName\":\"lalitadithya/automate-anything-and-everything\",\"slotName\":\"production\"}",
+                "start_time": "2020-06-06T06:00:36.8615741Z",
+                "end_time": "2020-06-06T06:00:36.8615741Z",
+                "active": true
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/deployments",
+            "apiVersion": "2018-11-01",
+            "name": "fa-a3e-task-orchestrator-dev/8a176d714dfb92f74ea5a426dfc33f2835e582cc1591019395256",
+            "location": "West US",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', 'fa-a3e-task-orchestrator-dev')]"
+            ],
+            "properties": {
+                "status": 4,
+                "author": "lalitadithya",
+                "deployer": "GitHub",
+                "message": "{\"type\":\"Deployment\",\"sha\":\"8a176d714dfb92f74ea5a426dfc33f2835e582cc\",\"repoName\":\"lalitadithya/automate-anything-and-everything\",\"slotName\":\"production\"}",
+                "start_time": "2020-06-01T13:49:55.632676Z",
+                "end_time": "2020-06-01T13:49:55.632676Z",
+                "active": false
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/deployments",
+            "apiVersion": "2018-11-01",
+            "name": "fa-a3e-task-orchestrator-dev/977826e1190d41a98a943be2aec5a6e4",
+            "location": "West US",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', 'fa-a3e-task-orchestrator-dev')]"
+            ],
+            "properties": {
+                "status": 4,
+                "author_email": "N/A",
+                "author": "N/A",
+                "deployer": "Push-Deployer",
+                "message": "Created via a push deployment",
+                "start_time": "2020-06-01T13:29:51.0044175Z",
+                "end_time": "2020-06-01T13:29:53.9234588Z",
+                "active": false
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/deployments",
+            "apiVersion": "2018-11-01",
+            "name": "fa-a3e-task-orchestrator-dev/bcff07ea12cb490daf3e34b1de7d5402",
+            "location": "West US",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', 'fa-a3e-task-orchestrator-dev')]"
+            ],
+            "properties": {
+                "status": 4,
+                "author_email": "N/A",
+                "author": "N/A",
+                "deployer": "Push-Deployer",
+                "message": "Created via a push deployment",
+                "start_time": "2020-06-01T13:33:47.9387971Z",
+                "end_time": "2020-06-01T13:33:52.3109647Z",
+                "active": false
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/deployments",
+            "apiVersion": "2018-11-01",
+            "name": "fa-a3e-task-orchestrator-dev/c89818bf1131423abf32cf91db894cf2",
+            "location": "West US",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', 'fa-a3e-task-orchestrator-dev')]"
+            ],
+            "properties": {
+                "status": 4,
+                "author_email": "N/A",
+                "author": "N/A",
+                "deployer": "Push-Deployer",
+                "message": "Created via a push deployment",
+                "start_time": "2020-06-06T05:52:17.3303078Z",
+                "end_time": "2020-06-06T05:52:20.5737512Z",
+                "active": false
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/deployments",
+            "apiVersion": "2018-11-01",
+            "name": "fa-a3e-task-orchestrator-dev/d2b5b250d9563e26bd63baf455eb1661f79a46871591014735729",
+            "location": "West US",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', 'fa-a3e-task-orchestrator-dev')]"
+            ],
+            "properties": {
+                "status": 4,
+                "author": "lalitadithya",
+                "deployer": "GitHub",
+                "message": "{\"type\":\"Deployment\",\"sha\":\"d2b5b250d9563e26bd63baf455eb1661f79a4687\",\"repoName\":\"lalitadithya/automate-anything-and-everything\",\"slotName\":\"production\"}",
+                "start_time": "2020-06-01T12:32:16.64459Z",
+                "end_time": "2020-06-01T12:32:16.64459Z",
+                "active": false
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/deployments",
+            "apiVersion": "2018-11-01",
+            "name": "fa-a3e-task-orchestrator-dev/dddafa55944e4ed3b819496427ae2db1",
+            "location": "West US",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', 'fa-a3e-task-orchestrator-dev')]"
+            ],
+            "properties": {
+                "status": 4,
+                "author_email": "N/A",
+                "author": "N/A",
+                "deployer": "Push-Deployer",
+                "message": "Created via a push deployment",
+                "start_time": "2020-06-01T12:50:38.2663666Z",
+                "end_time": "2020-06-01T12:50:41.7447501Z",
+                "active": false
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/deployments",
+            "apiVersion": "2018-11-01",
+            "name": "fa-a3e-task-orchestrator-dev/e2879b775b8f415ca78afaa659c2b9a2",
+            "location": "West US",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', 'fa-a3e-task-orchestrator-dev')]"
+            ],
+            "properties": {
+                "status": 4,
+                "author_email": "N/A",
+                "author": "N/A",
+                "deployer": "GITHUB_ZIP_DEPLOY",
+                "message": "Created via a push deployment",
+                "start_time": "2020-06-01T13:49:44.5220142Z",
+                "end_time": "2020-06-01T13:49:49.1445459Z",
+                "active": false
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/functions",
+            "apiVersion": "2018-11-01",
+            "name": "fa-a3e-task-orchestrator-dev/GetLogs",
+            "location": "West US",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', 'fa-a3e-task-orchestrator-dev')]"
+            ],
+            "properties": {
+                "script_root_path_href": "https://fa-a3e-task-orchestrator-dev.azurewebsites.net/admin/vfs/site/wwwroot/GetLogs/",
+                "script_href": "https://fa-a3e-task-orchestrator-dev.azurewebsites.net/admin/vfs/site/wwwroot/bin/AutomateAnythingEverything.Functions.dll",
+                "config_href": "https://fa-a3e-task-orchestrator-dev.azurewebsites.net/admin/vfs/site/wwwroot/GetLogs/function.json",
+                "href": "https://fa-a3e-task-orchestrator-dev.azurewebsites.net/admin/functions/GetLogs",
+                "config": {}
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/functions",
+            "apiVersion": "2018-11-01",
+            "name": "fa-a3e-task-orchestrator-dev/StartTask",
+            "location": "West US",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', 'fa-a3e-task-orchestrator-dev')]"
+            ],
+            "properties": {
+                "script_root_path_href": "https://fa-a3e-task-orchestrator-dev.azurewebsites.net/admin/vfs/site/wwwroot/StartTask/",
+                "script_href": "https://fa-a3e-task-orchestrator-dev.azurewebsites.net/admin/vfs/site/wwwroot/bin/AutomateAnythingEverything.Functions.dll",
+                "config_href": "https://fa-a3e-task-orchestrator-dev.azurewebsites.net/admin/vfs/site/wwwroot/StartTask/function.json",
+                "href": "https://fa-a3e-task-orchestrator-dev.azurewebsites.net/admin/functions/StartTask",
+                "config": {},
+                "test_data": "{\"method\":\"post\",\"queryStringParams\":[],\"headers\":[],\"body\":\"{\\r\\n  \\\"taskName\\\": \\\"StopVM\\\",\\r\\n  \\\"parameters\\\": [\\r\\n    {\\r\\n      \\\"name\\\": \\\"VMName\\\",\\r\\n      \\\"value\\\": \\\"a3etest\\\"\\r\\n    },\\r\\n    {\\r\\n      \\\"name\\\": \\\"ResourceGroupName\\\",\\r\\n      \\\"value\\\": \\\"rg-a3e-test_resources-dev\\\"\\r\\n    }\\r\\n  ]\\r\\n}\"}"
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/hostNameBindings",
+            "apiVersion": "2018-11-01",
+            "name": "a3e-bot-dev/a3e-bot-dev.azurewebsites.net",
+            "location": "West US",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', 'a3e-bot-dev')]"
+            ],
+            "properties": {
+                "siteName": "a3e-bot-dev",
+                "hostNameType": "Verified"
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/hostNameBindings",
+            "apiVersion": "2018-11-01",
+            "name": "fa-a3e-task-orchestrator-dev/fa-a3e-task-orchestrator-dev.azurewebsites.net",
+            "location": "West US",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', 'fa-a3e-task-orchestrator-dev')]"
+            ],
+            "properties": {
+                "siteName": "fa-a3e-task-orchestrator-dev",
+                "hostNameType": "Verified"
+            }
+        },
+        {
+            "type": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
+            "apiVersion": "2020-04-01",
+            "name": "cosmos-a3e/a3e-dev/bot-framework",
+            "dependsOn": [
+                "[resourceId('Microsoft.DocumentDB/databaseAccounts/sqlDatabases', 'cosmos-a3e', 'a3e-dev')]",
+                "[resourceId('Microsoft.DocumentDB/databaseAccounts', 'cosmos-a3e')]"
+            ],
+            "properties": {
+                "resource": {
+                    "id": "bot-framework",
+                    "indexingPolicy": {
+                        "indexingMode": "consistent",
+                        "automatic": true,
+                        "includedPaths": [
+                            {
+                                "path": "/*"
+                            }
+                        ],
+                        "excludedPaths": [
+                            {
+                                "path": "/\"_etag\"/?"
+                            }
+                        ]
+                    },
+                    "partitionKey": {
+                        "paths": [
+                            "/id"
+                        ],
+                        "kind": "Hash"
+                    },
+                    "uniqueKeyPolicy": {
+                        "uniqueKeys": []
+                    },
+                    "conflictResolutionPolicy": {
+                        "mode": "LastWriterWins",
+                        "conflictResolutionPath": "/_ts"
+                    }
+                },
+                "options": {}
+            }
+        },
+        {
+            "type": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
+            "apiVersion": "2020-04-01",
+            "name": "cosmos-a3e/a3e-dev/bot-storage",
+            "dependsOn": [
+                "[resourceId('Microsoft.DocumentDB/databaseAccounts/sqlDatabases', 'cosmos-a3e', 'a3e-dev')]",
+                "[resourceId('Microsoft.DocumentDB/databaseAccounts', 'cosmos-a3e')]"
+            ],
+            "properties": {
+                "resource": {
+                    "id": "bot-storage",
+                    "indexingPolicy": {
+                        "indexingMode": "consistent",
+                        "automatic": true,
+                        "includedPaths": [
+                            {
+                                "path": "/*"
+                            }
+                        ],
+                        "excludedPaths": [
+                            {
+                                "path": "/\"_etag\"/?"
+                            }
+                        ]
+                    },
+                    "partitionKey": {
+                        "paths": [
+                            "/userId"
+                        ],
+                        "kind": "Hash"
+                    },
+                    "uniqueKeyPolicy": {
+                        "uniqueKeys": []
+                    },
+                    "conflictResolutionPolicy": {
+                        "mode": "LastWriterWins",
+                        "conflictResolutionPath": "/_ts"
+                    }
+                },
+                "options": {}
+            }
+        },
+        {
+            "type": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/throughputSettings",
+            "apiVersion": "2020-04-01",
+            "name": "cosmos-a3e/a3e-dev/default",
+            "dependsOn": [
+                "[resourceId('Microsoft.DocumentDB/databaseAccounts/sqlDatabases', 'cosmos-a3e', 'a3e-dev')]",
+                "[resourceId('Microsoft.DocumentDB/databaseAccounts', 'cosmos-a3e')]"
+            ],
+            "properties": {
+                "resource": {
+                    "throughput": 400
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+            "apiVersion": "2019-06-01",
+            "name": "saa3edev/default/azure-webjobs-hosts",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', 'saa3edev', 'default')]",
+                "[resourceId('Microsoft.Storage/storageAccounts', 'saa3edev')]"
+            ],
+            "properties": {
+                "publicAccess": "None"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+            "apiVersion": "2019-06-01",
+            "name": "saa3edev/default/azure-webjobs-secrets",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', 'saa3edev', 'default')]",
+                "[resourceId('Microsoft.Storage/storageAccounts', 'saa3edev')]"
+            ],
+            "properties": {
+                "publicAccess": "None"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+            "apiVersion": "2019-06-01",
+            "name": "saa3edev/default/task-definition",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', 'saa3edev', 'default')]",
+                "[resourceId('Microsoft.Storage/storageAccounts', 'saa3edev')]"
+            ],
+            "properties": {
+                "publicAccess": "None"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+            "apiVersion": "2019-06-01",
+            "name": "saa3edev/default/task-scripts",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', 'saa3edev', 'default')]",
+                "[resourceId('Microsoft.Storage/storageAccounts', 'saa3edev')]"
+            ],
+            "properties": {
+                "publicAccess": "None"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/fileServices/shares",
+            "apiVersion": "2019-06-01",
+            "name": "saa3edev/default/fa-a3e-task-orchestrator-devbc74",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts/fileServices', 'saa3edev', 'default')]",
+                "[resourceId('Microsoft.Storage/storageAccounts', 'saa3edev')]"
+            ],
+            "properties": {
+                "shareQuota": 5120
+            }
+        }
+    ]
+}
