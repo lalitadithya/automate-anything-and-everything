@@ -14,6 +14,7 @@ A simple, easy to use, cloud native and serverless automation framework built on
 | Component Name | Component Description | Status |
 |----------------|-----------------------|--------|
 | Task Orcestrator | This is an Azure functions app that takes care of deploying the worker images to the Azure Container Instances for a  task | ![Deploy-Azure-Functions](https://github.com/lalitadithya/automate-anything-and-everything/workflows/Deploy-Azure-Functions/badge.svg?branch=master) |
+| Chat Bot | This is a chat bot that is built on top of Bot Framework v4 and it is deployed to Azure app service | ![Deploy Chat Bot to Azure Web Apps](https://github.com/lalitadithya/automate-anything-and-everything/workflows/Deploy%20Chat%20Bot%20to%20Azure%20Web%20Apps/badge.svg) |
 
 ## Contribute
 This is in active development. Please feel free to fork and open PR. The road map can be found in Github issues. 
